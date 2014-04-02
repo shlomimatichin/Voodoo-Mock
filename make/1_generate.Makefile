@@ -2,11 +2,10 @@ generateTests: generateCxxtest generateVoodoo
 
 include $(VOODOO_ROOT_DIR)/make/common.Makefile
 
-CXXTEST_FLAGS := --have-eh --abort-on-fail --have-std --runner=VerboseListener --longlong='long long'
-VOODOO_SCAN_HEADERS_ROOTS := .
-VOODOO_MULTI_EXCLUDES := '\btests/'
-VOODOO_FLAGS := --define=DEBUG --define=UNITTEST --define=BOOST_ASIO_HAS_MOVE
-VOODOO_EXTERNALS_FLAGS :=
+VOODOO_SCAN_HEADERS_ROOTS ?= .
+VOODOO_MULTI_EXCLUDES ?= '\btests/'
+VOODOO_FLAGS ?= --define=DEBUG --define=UNITTEST --define=BOOST_ASIO_HAS_MOVE
+VOODOO_EXTERNALS_FLAGS ?=
 
 __VOODOO_ENVIRONMENT = PYTHONPATH=$(VOODOO_ROOT_DIR)/voodoo LD_LIBRARY_PATH=$(VOODOO_ROOT_DIR)/voodoo:$(LD_LIBRARY_PATH)
 __VOODOO_MULTI_EXECUTABLE = $(__VOODOO_ENVIRONMENT) python $(VOODOO_ROOT_DIR)/voodoo/multi.py
@@ -44,4 +43,4 @@ build/voodoo/%.h:
 $(UNITTEST_BUILD_DIRECTORY)/%.cxx:
 	-$(Q)mkdir --parents $(@D)
 	@echo 'CXXTSTGN' $@
-	$(Q)python $(VOODOO_ROOT_DIR)/cxxtest/cxxtestgen.py $(CXXTEST_FLAGS) --root --output=$@ $< 
+	$(Q)python $(VOODOO_ROOT_DIR)/cxxtest/simplecxxtestgen.py --output=$@ --input=$< 

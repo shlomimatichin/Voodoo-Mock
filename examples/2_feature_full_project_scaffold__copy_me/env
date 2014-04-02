@@ -1,0 +1,22 @@
+#!/bin/bash
+#run vim and work under this environment
+
+mydir=`dirname $BASH_SOURCE`
+mydir=`realpath $mydir`
+if [ ! -z "$TOP" -a "$TOP" != "$mydir" ] ; then
+    echo "Error: Nested env"
+    exit -1
+fi
+
+export TOP=$mydir
+export VOODOO_ROOT_DIR=`realpath ../..`
+export VIMINIT="source $TOP/tools/vim/settings.vim"
+export PYTHONPATH=$PYTHONPATH:$TOP/py
+
+# ./env - start a shell for interactive session
+# ./env command - run a command under environment
+if [ "$#" = "0" ] ; then
+    exec $SHELL
+else
+    exec "$@"
+fi
