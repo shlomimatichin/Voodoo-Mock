@@ -18,7 +18,7 @@ class Interface
 public:
 	virtual ~Interface() {}
 	virtual void compare( const char * typeString , const void * pointerToValue ) = 0;
-	virtual void effect( const void * pointerToValue ) = 0;
+	virtual void effectVoidPointer( const void * pointerToValue ) = 0;
 };
 
 template < typename T >
@@ -59,7 +59,7 @@ private:
 		return strcmp( TemplateTypeString<T>().typeString() , typeString ) == 0;
 	}
 
-	void effect( const void * pointerToValue ) override
+	void effectVoidPointer( const void * pointerToValue ) override
 	{
 		effect( * (T *) pointerToValue );
 	}

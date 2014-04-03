@@ -181,10 +181,10 @@ private:
                     const void *    pointerToValue )
 	{
 		if ( parameterIndex >= _parametersCount || strcmp( typeString , "VOODOO_NO_MORE_PARAMETERS" ) == 0 ) {
-            VOODOO_ASSERT( ! "Should never happen" );
+			VOODOO_ASSERT( ! "Should never happen" );
 			return;
 		}
-        _parameters[ parameterIndex ]->effect( pointerToValue );
+		_parameters[ parameterIndex ]->effectVoidPointer( pointerToValue );
 	}
 
 private:
