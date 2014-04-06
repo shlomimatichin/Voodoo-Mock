@@ -31,7 +31,8 @@ What does it do?
 ----------------
 Auto-generates code stub that allows you to write tests that look like this
 (pseudo code):
-```Create Scenario:
+```
+Create Scenario:
    The function A would be called with parameters a and b
    The function C would be called with parameters c and d
 Run the unit under test
