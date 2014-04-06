@@ -20,8 +20,9 @@ set encoding=utf-8
 command Ctags !ctags --exclude=build --exclude=build_unittest --exclude=tools -R .
 command NewFile %!python $VOODOO_ROOT_DIR/vim/newfile.py %
 command Coverage !python $VOODOO_ROOT_DIR/vim/coverage.py %
-command -range Colin :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columnidentwrapper.py %
-command -range ConstructorReferenceArguments :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columnidentwrapper.py % --constructorReferenceArguments
+command -range Colin :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columindent/configuredmain.py % indent
+command -range ColinDeclaration :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columindent/configuredmain.py % indentCPPDeclaration
+command -range ConstructorReferenceArguments :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columindent/configuredmain.py % constructorReferenceArguments
 command -range DirtyTrace :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/dirtytrace.py %
 
 map <F6> :Colin<CR>

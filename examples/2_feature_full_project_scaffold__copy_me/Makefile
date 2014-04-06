@@ -10,6 +10,7 @@ export CXXTEST_FIND_ROOT = c cpp
 export PYTEST_FIND_ROOT = py
 export ENFORCE_COVERAGE_FIND_ROOT_CPP = c cpp
 export UNITTEST_INCLUDES = -Ibuild_unittest/voodoo/cpp -Ibuild_unittest/voodoo/c -Icpp -Ic -I.
+export VOODOO_INCLUDES = --includePath=cpp --includePath=c
 
 clean:
 	rm -fr build_unittest build coverage
@@ -39,3 +40,9 @@ test_singletestsuite:
 	$(MAKE) -f $(VOODOO_ROOT_DIR)/make/1_generate.Makefile
 	$(MAKE) -f $(VOODOO_ROOT_DIR)/make/2_build.Makefile CXXTEST_FIND_PATTERN=$(SINGLE_TEST_SUITE)
 	$(Q)$(VOODOO_ROOT_DIR)/make/runsingletestsuite.sh $(SINGLE_TEST_SUITE)
+
+voodoo_compileSingleHeader:
+	$(MAKE) -f $(VOODOO_ROOT_DIR)/make/1_generate.Makefile generateSingleVoodoo
+
+voodoo_forceGenerateAll:
+	$(MAKE) -f $(VOODOO_ROOT_DIR)/make/1_generate.Makefile generateVoodooForce
