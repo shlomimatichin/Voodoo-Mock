@@ -286,5 +286,22 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
+    def test_NoExcept( self ):
+        self._simpleTest( "int f() noexcept { return 0; } int g() noexcept;"
+                "class A { public: A() noexcept; ~A() noexcept; void method() noexcept;};", [
+            dict( callbackName = "functionDefinition", templatePrefix = "", name = "f", text = "int f",
+                returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
+            dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "g", text = "int g",
+                returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                fullTextNaked = "classA{public:A()noexcept;~A()noexcept;voidmethod()noexcept;}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "constructorDefinition", templatePrefix = "", name = "A", text = "A",
+                returnType = None, static = None, virtual = False, const = False, parameters = [] ),
+            dict( callbackName = "method", templatePrefix = "", name = "method", text = "method",
+                returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()

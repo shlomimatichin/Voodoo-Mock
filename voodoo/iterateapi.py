@@ -87,7 +87,8 @@ class IterateAPI:
         elif node.kind == cindex.CursorKind.FUNCTION_DECL and not node.is_definition():
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
-            text = self.__nodeText( node, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD )
+            text = self.__nodeText( node, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD,
+                    removeSuffixKeywords = [ 'noexcept' ] )
             returnType = self.__removeSpaceInsensitive( text, node.spelling )
             decomposition = functiondecomposition.FunctionDecomposition(
                                                         name = node.spelling,
@@ -100,7 +101,7 @@ class IterateAPI:
         elif node.kind == cindex.CursorKind.FUNCTION_DECL and node.is_definition():
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
-            text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True )
+            text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'noexcept' ] )
             returnType = self.__removeSpaceInsensitive( text, node.spelling )
             decomposition = functiondecomposition.FunctionDecomposition(
                                                                 name = node.spelling,
@@ -125,7 +126,7 @@ class IterateAPI:
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
 
-            text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'const', 'override' ] )
+            text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'const', 'override', 'noexcept' ] )
             returnType = self.__removeSpaceInsensitive( text, node.spelling )
             decomposition = functiondecomposition.FunctionDecomposition(
                                                                 name = node.spelling,
