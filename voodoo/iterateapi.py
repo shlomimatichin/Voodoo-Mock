@@ -51,16 +51,7 @@ class IterateAPI:
             self.__iterateNode( node )
 
     def __relevantNodes( self, translationUnit, filename ):
-        return [ node for node in self.__nonBuiltInNodes( translationUnit ) if node.location.file.name == filename ]
-
-    def __nonBuiltInNodes( self, translationUnit ):
-        assert translationUnit.cursor.kind == cindex.CursorKind.TRANSLATION_UNIT
-        children = list( translationUnit.cursor.get_children() )
-        assert len( children ) >= 3
-        assert children[ 0 ].spelling == "__int128_t"
-        assert children[ 1 ].spelling == "__uint128_t"
-        assert children[ 2 ].spelling == "__builtin_va_list"
-        return children[ 3 : ]
+        return [ node for node in translationUnit.cursor.get_children() if node.location.file.name == filename ]
 
     def __iterateNode( self, node ):
         if node.kind == cindex.CursorKind.STRUCT_DECL and not node.is_definition():

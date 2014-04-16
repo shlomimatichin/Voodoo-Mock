@@ -5,9 +5,9 @@ import shutil
 shutil.rmtree( "/tmp/clang", ignore_errors = True )
 os.mkdir( "/tmp/clang" )
 os.chdir( "/tmp/clang" )
-subprocess.check_call( "svn co http://llvm.org/svn/llvm-project/llvm/trunk@193808 llvm", shell = True )
-checkoutClang = subprocess.Popen( "svn co http://llvm.org/svn/llvm-project/cfe/trunk@193803 clang", shell = True, cwd = "llvm/tools" )
-subprocess.check_call( "svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk@193807 compiler-rt", shell = True, cwd = "llvm/projects" )
+subprocess.check_call( "svn co http://llvm.org/svn/llvm-project/llvm/trunk@206407 llvm", shell = True )
+checkoutClang = subprocess.Popen( "svn co http://llvm.org/svn/llvm-project/cfe/trunk@206406 clang", shell = True, cwd = "llvm/tools" )
+subprocess.check_call( "svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk@206387 compiler-rt", shell = True, cwd = "llvm/projects" )
 result = checkoutClang.wait()
 if result != 0:
     raise Exception( "checkout of clang failed" )

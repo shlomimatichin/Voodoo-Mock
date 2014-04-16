@@ -165,7 +165,6 @@ __m128i __builtin_ia32_pcmpeqd128 ( __v4si, __v4si ) { return (__m128i){ 0, 0 };
 __m128i __builtin_ia32_pcmpgtb128 ( __v16qi, __v16qi ) { return (__m128i){ 0, 0 }; }
 __m128i __builtin_ia32_pcmpgtw128 ( __v8hi, __v8hi ) { return (__m128i){ 0, 0 }; }
 __m128i __builtin_ia32_pcmpgtd128 ( __v4si, __v4si ) { return (__m128i){ 0, 0 }; }
-void __builtin_ia32_movnti64( long long int*, long long int ) {}
 unsigned char __builtin_ia32_addcarryx_u32( unsigned char, unsigned int, unsigned int, unsigned int * ) { return '\0'; }
 unsigned char __builtin_ia32_addcarryx_u64( unsigned char, unsigned long, unsigned long, unsigned long long * ) { return '\0'; }
 
@@ -177,5 +176,9 @@ unsigned char __builtin_ia32_addcarryx_u64( unsigned char, unsigned long, unsign
 #define __attribute__( x )
 
 #define _X86INTRIN_H_INCLUDED
+
+#define _STDBOOL_H
+#define _Bool	bool
+#define __bool_true_false_are_defined	1
 
 #endif // __VOODOO_PRE_INCLUDE_H__

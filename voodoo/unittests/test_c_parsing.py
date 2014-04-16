@@ -277,5 +277,21 @@ extern void dev_put(struct net_device *dev);
             dict( callbackName = "leaveStruct" ),
         ] )
 
+    def test_justADefine( self ):
+        self._simpleTest( "#define nothing nada\n", [] )
+        self._simpleTest( "#define nothing\n\nnothing", [] )
+        self._simpleTest( "#define nothing\n\nnothing int a;", [
+            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+        ] )
+        self._simpleTest( "#define a b\n\nint a;", [
+            dict( callbackName = "variableDeclaration", name = "b", text = "int a" ),
+        ] )
+
+    def notest_KnownIssue_DefiningIntBoolOrBuiltinTypes( self ):
+        self._simpleTest( "#define int int\n\rbool b;\nint a;", [
+            dict( callbackName = "variableDeclaration", name = "b", text = "bool b" ),
+            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()
