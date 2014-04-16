@@ -13,6 +13,7 @@ class SavingIterator( iterateapi.IterateAPI ):
         self._addSaver( 'variableDeclaration' )
         self._addSaver( 'fieldDeclaration' )
         self._addSaver( 'typedef' )
+        self._addSaver( 'union' )
         self._addSaver( 'enum' )
         self._addDecompositionSaver( 'functionForwardDeclaration' )
         self._addDecompositionSaver( 'functionDefinition' )

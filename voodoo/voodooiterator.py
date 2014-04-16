@@ -49,6 +49,13 @@ class VoodooIterator( iterateapi.IterateAPI ):
             return
         self._textOut( text )
 
+    def union( self, name, text ):
+        if self._protectionIgnoring.ignore():
+            return
+        if name in self._perFileSettings.SKIP:
+            return
+        self._textOut( text )
+
     def enum( self, name, text ):
         if self._protectionIgnoring.ignore():
             return
@@ -146,12 +153,12 @@ class VoodooIterator( iterateapi.IterateAPI ):
     def _enterConstruct( self, name, inheritance, fullText, construct, defaultProtection ):
         if not self.shouldImplementEnterConstruct( name, fullText, defaultProtection ):
             return
-        mock = VoodooMock(	construct = construct,
+        mock = VoodooMock(  construct = construct,
                             identifier = name,
                             inherits = [ identifier for protection, identifier in inheritance ],
-							fullIdentifier = self.fullIdentifier( name ),
-							code = self._code,
-							perFileSettings = self._perFileSettings,
+                            fullIdentifier = self.fullIdentifier( name ),
+                            code = self._code,
+                            perFileSettings = self._perFileSettings,
                             template = "",
                             templateParametersList = None )
         mock.implementRedirectorClassHeader()

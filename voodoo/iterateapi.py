@@ -19,6 +19,7 @@ class IterateAPI:
     def leaveClass( self ): assert False, "Please override in deriving class"
     def variableDeclaration( self, name, text ): assert False, "Please override in deriving class"
     def typedef( self, name, text ): assert False, "Please override in deriving class"
+    def union( self, name, text ): assert False, "Please override in deriving class"
     def enum( self, name, text ): assert False, "Please override in deriving class"
     def functionForwardDeclaration( self, decomposition ): assert False, "Please override in deriving class"
     def functionDefinition( self, decomposition ): assert False, "Please override in deriving class"
@@ -148,6 +149,10 @@ class IterateAPI:
             self.accessSpec( access = access )
         elif node.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
             pass
+        elif node.kind == cindex.CursorKind.UNION_DECL:
+            if node.spelling == '':
+                return
+            self.union( name = node.spelling, text = self.__nodeText( node ) )
         else:
             try: nodeText = self.__nodeText( node )
             except Exception as e: nodeText = "Exception (%s)" % str( e )

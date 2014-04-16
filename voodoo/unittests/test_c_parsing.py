@@ -265,5 +265,17 @@ extern void dev_put(struct net_device *dev);
                 returnType = "int", static = True, parameters = [], const = False, virtual = False ),
         ] )
 
+    def test_unionDeclaration( self ):
+        self._simpleTest( "union a { int b; int c; };", [
+            dict( callbackName = "union", name = "a", text = "union a { int b ; int c ; }" ),
+        ] )
+
+    def test_anonymousUnionMember( self ):
+        self._simpleTest( "struct a { union { int b; int c; } d; };", [
+            dict( callbackName = "enterStruct", name = "a", fullTextNaked = "structa{union{intb;intc;}d;}", inheritance = [] ),
+            dict( callbackName = "fieldDeclaration", name = "d", text = "union { int b ; int c ; } d" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()
