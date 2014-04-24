@@ -303,5 +303,12 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
+    def test_ExternC( self ):
+        self._simpleTest( 'extern "C" { int a; }\nextern "C" void f();', [
+            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "f", text = "void f",
+                returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()

@@ -68,6 +68,9 @@ class IterateAPI:
             for child in node.get_children():
                 self.__iterateNode( child )
             self.leaveClass()
+        elif node.kind == cindex.CursorKind.UNEXPOSED_DECL: #extern "C"
+            for child in node.get_children():
+                self.__iterateNode( child )
         elif node.kind == cindex.CursorKind.VAR_DECL:
             self.variableDeclaration( name = node.spelling, text = self.__nodeText( node, removePrefixKeywords = [ 'static' ] ) )
         elif node.kind == cindex.CursorKind.FIELD_DECL:
@@ -147,7 +150,7 @@ class IterateAPI:
         else:
             try: nodeText = self.__nodeText( node )
             except Exception as e: nodeText = "Exception (%s)" % str( e )
-            raise Exception( "Voodoo does not recognize the following node:\n%s\nNode test:\n%s" % ( self.__traceNode( node ), nodeText ) )
+            raise Exception( "Voodoo does not recognize the following node:\n%s\nNode text:\n%s" % ( self.__traceNode( node ), nodeText ) )
 
     def __classInheritance( self, node ):
         inheritance = []
