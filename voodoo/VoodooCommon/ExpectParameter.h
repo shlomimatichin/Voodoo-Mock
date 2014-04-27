@@ -552,40 +552,74 @@ private:
 	}
 };
 
-class StringEquals : public PredicateBase< const char * >
+class StringEquals: public StrongTyped< const char * >
 {
 public:
-	StringEquals( const char * to ) :
-		PredicateBase< const char * >( "StringEquals" ),
-		_to( to )
+	StringEquals( const char * value ) :
+		StrongTyped< const char * >( "StringEquals" ),
+		_value( value )
 	{
-	}
-
-	bool operator () ( const char * & value )
-	{
-		return strcmp( value, _to ) == 0;
 	}
 
 private:
-	const char * _to;
+	const char * _value;
+
+	void compare( const char * & value )
+	{
+		if ( value == 0 && _value == 0 )
+			return;
+		if ( value == 0 ) {
+			ErrorMessage error;
+			error.append( "Expected string '" );
+			error.append( _value );
+			error.append( "' but found NULL" );
+			throw error;
+		}
+		if ( strcmp( value, _value ) != 0 ) {
+			ErrorMessage error;
+			error.append( "Expected string '" );
+			error.append( _value );
+			error.append( "' to be equal to found string '" );
+			error.append( value );
+			error.append( "'" );
+			throw error;
+		}	
+	}
 };
 
-class MutableStringEquals : public PredicateBase< char * >
+class MutableStringEquals: public StrongTyped< char * >
 {
 public:
-	MutableStringEquals( const char * to ) :
-		PredicateBase< char * >( "StringEquals" ),
-		_to( to )
+	MutableStringEquals( const char * value ) :
+		StrongTyped< char * >( "MutableStringEquals" ),
+		_value( value )
 	{
-	}
-
-	bool operator () ( char * & value )
-	{
-		return strcmp( value, _to ) == 0;
 	}
 
 private:
-	const char * _to;
+	const char * _value;
+
+	void compare( char * & value )
+	{
+		if ( value == 0 && _value == 0 )
+			return;
+		if ( value == 0 ) {
+			ErrorMessage error;
+			error.append( "Expected string '" );
+			error.append( _value );
+			error.append( "' but found NULL" );
+			throw error;
+		}
+		if ( strcmp( value, _value ) != 0 ) {
+			ErrorMessage error;
+			error.append( "Expected string '" );
+			error.append( _value );
+			error.append( "' to be equal to found string '" );
+			error.append( value );
+			error.append( "'" );
+			throw error;
+		}	
+	}
 };
 
 template < typename T >
