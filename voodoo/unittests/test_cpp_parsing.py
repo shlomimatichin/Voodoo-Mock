@@ -310,5 +310,14 @@ class TestCParsing( unittest.TestCase ):
                 returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
+    def test_ExplicitConversionOperator( self ):
+        self._simpleTest( 'class A { public: explicit operator int () { return 0; } };', [
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                fullTextNaked = "classA{public:explicitoperatorint(){return0;}}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "conversionFunction", conversionType = "int", const = False ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()

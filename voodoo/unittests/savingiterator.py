@@ -19,6 +19,7 @@ class SavingIterator( iterateapi.IterateAPI ):
         self._addDecompositionSaver( 'functionDefinition' )
         self._addDecompositionSaver( 'constructorDefinition' )
         self._addDecompositionSaver( 'method' )
+        self._addSaver( 'conversionFunction' )
         self._addSaver( 'enterNamespace' )
         self._addSaver( 'leaveNamespace' )
         self._addSaver( 'accessSpec' )

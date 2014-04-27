@@ -25,6 +25,7 @@ class IterateAPI:
     def functionDefinition( self, decomposition ): assert False, "Please override in deriving class"
     def constructorDefinition( self, decomposition ): assert False, "Please override in deriving class"
     def method( self, decomposition ): assert False, "Please override in deriving class"
+    def conversionFunction( self, conversionType, const ): assert False, "Please override in deriving class"
     def fieldDeclaration( self, name, text ): assert False, "Please override in deriving class"
     def enterNamespace( self, name ): assert False, "Please override in deriving class"
     def leaveNamespace( self ): assert False, "Please override in deriving class"
@@ -131,6 +132,10 @@ class IterateAPI:
                                                                 static = node.is_static_method(),
                                                                 const = self.__isMethodConst( node ))
             self.method( decomposition = decomposition )
+        elif node.kind == cindex.CursorKind.CONVERSION_FUNCTION:
+            assert node.spelling.startswith( "operator" )
+            conversionType = node.spelling[ len( "operator" ) : ].strip()
+            self.conversionFunction( conversionType = conversionType, const = self.__isMethodConst( node ) )
         elif node.kind == cindex.CursorKind.DESTRUCTOR:
             pass
         elif node.kind == cindex.CursorKind.NAMESPACE:
