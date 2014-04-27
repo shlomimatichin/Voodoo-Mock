@@ -1,8 +1,7 @@
 import re
-import tempfile
-import shutil
 import os
 import subprocess
+import glob
 
 class EnforceCPPCoverage:
     _SOURCE_FILENAME = re.compile( "0:Source:(\S+)" )
@@ -17,11 +16,10 @@ class EnforceCPPCoverage:
         self._filesWithoutCoverageReport = set( filesToCover )
         self._init()
 
-        self._tempdir = tempfile.mkdtemp( suffix = "enforceCPPCoverage" )
         try:
             self._scan( unitTestExecutables )
         finally:
-            shutil.rmtree( self._tempdir, ignore_errors = True )
+            os.system( "rm -fr *.gcov" )
 
         self._conclude()
 
@@ -77,22 +75,17 @@ class EnforceCPPCoverage:
                 if self._LINE_EXEMPT_FROM_CODE_COVERAGE in line:
                     self._coveredLinesMarkedAsExempt.add( ( sourceFilename, lineNumber ) )
 
-    def _cleanTempDir( self ):
-        for filename in os.listdir( self._tempdir ):
-            os.unlink( os.path.join( self._tempdir, filename ) )
-
     def _scan( self, unitTestExecutables ):
         for executable in unitTestExecutables:
-            self._cleanTempDir()
             output = subprocess.check_output(
                         [ 'gcov', '--long-file-names', '--preserve-paths', '--relative-only', os.path.abspath( executable ) ],
-                        stderr = subprocess.STDOUT,
-                        cwd = self._tempdir )
-            dirList = os.listdir( self._tempdir )
+                        stderr = subprocess.STDOUT )
+            dirList = glob.glob( "*.gcov" )
             if len( dirList ) == 0:
                 raise Exception( "GCOV failed:\n%s" % output )
             for gcovFilename in dirList:
-                self._readGCOV( os.path.join( self._tempdir, gcovFilename ) )
+                self._readGCOV( gcovFilename )
+                os.unlink( gcovFilename )
 
 if __name__ == "__main__":
     import argparse
