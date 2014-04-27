@@ -44,36 +44,18 @@ if len( tests ) == 0:
     raise Exception( "no tests found" )
 
 RUN_TEST_TEMPLATE = r"""
-if ( ( specificTest && testName == "%(testName)s" ) || ! specificTest ) {
- std::cout << "\nTEST '%(testName)s'\n";
- try {
-  testClass->setUp();
- } catch ( std::exception & e ) {
-  std::cout << "\n%(location)s: Exception '" << e.what() << "' thrown from setUp (for test %(testName)s)\n";
-  allPassed = false;
- } catch ( ... ) {
-  std::cout << "\n%(location)s: Exception thrown from setUp (for test %(testName)s)\n";
-  allPassed = false;
- }
- try {
-  testClass->%(testName)s();
- } catch ( std::exception & e ) {
-  std::cout << "\n%(location)s: Exception '" << e.what() << "' thrown from test %(testName)s\n";
-  allPassed = false;
- } catch ( ... ) {
-  std::cout << "\n%(location)s: Exception thrown from test %(testName)s\n";
-  allPassed = false;
- }
- try {
-  testClass->tearDown();
- } catch ( std::exception & e ) {
-  std::cout << "\n%(location)s: Exception '" << e.what() << "' thrown from tearDown for test %(testName)s\n";
-  allPassed = false;
- } catch ( ... ) {
-  std::cout << "\n%(location)s: Exception thrown from tearDown for test %(testName)s\n";
-  allPassed = false;
- }
-}
+ static class TestDescription_%(testName)s : public CxxTest::RealTestDescription {
+ public:
+  TestDescription_%(testName)s() : CxxTest::RealTestDescription( tests, suiteDescription, %(testLine)s, "%(testName)s" ) {}
+  void runTest() { theSuite.%(testName)s(); }
+ } * testDescription_%(testName)s = 0;
+ if ( ( specificTest && testName == "%(testName)s" ) || ! specificTest )
+  testDescription_%(testName)s = new TestDescription_%(testName)s;
+"""
+
+DELETE_TEMPLATE = r"""
+ if ( testDescription_%(testName)s != 0 )
+  delete testDescription_%(testName)s;
 """
 
 TEMPLATE = r"""
@@ -89,40 +71,36 @@ TEMPLATE = r"""
 #include <cxxtest/StdValueTraits.h>
 #include <cxxtest/TestSuite.h>
 #include <cxxtest/RealDescriptions.h>
+#include <cxxtest/VerboseListener.h>
 #include <cxxtest/Root.cpp>
+
 #include "%(testFile)s"
 
+static %(testClass)s theSuite;
+static CxxTest::List tests = { 0, 0 };
+CxxTest::StaticSuiteDescription suiteDescription( "%(testFile)s", 1, "Test", theSuite, tests );
+
 int main( int argc, const char * argv[] ) {
- bool allPassed = true;
  bool specificTest = argc == 2;
  std::string testName = specificTest ? argv[ 1 ] : "";
- %(testClass)s * testClass;
  CxxTest::setAbortTestOnFail( true );
-
- try {
-  testClass = new %(testClass)s;
- } catch ( std::exception & e ) {
-  std::cout << "\n%(location)s: Exception '" << e.what() << "' thrown from constructor of %(testClass)s\n";
-  allPassed = false;
- } catch ( ... ) {
-  std::cout << "\n%(location)s: Exception thrown from constructor of %(testClass)s\n";
-  allPassed = false;
- }
-
- %(code)s
-
- delete testClass;
- return allPassed ? 0 : 1;
+%(code)s
+ int result = CxxTest::VerboseListener().run();
+%(deleteCode)s
+ return result;
 }
 """
 
 testsCode = "\n".join( RUN_TEST_TEMPLATE % dict(
             location = "%s:%d" % ( args.input, testLine ),
+            testLine = testLine,
             testName = testName )
         for testName, testLine in tests )
+deleteCode = "\n".join( DELETE_TEMPLATE % dict( testName = testName ) for testName, testLine in tests )
 code = TEMPLATE % dict( code = testsCode,
                         testClass = testClassName,
                         location = "%s:1" % args.input,
-                        testFile = args.input )
+                        testFile = args.input,
+                        deleteCode = deleteCode )
 with open( args.output, "w" ) as f:
     f.write( code )

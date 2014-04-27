@@ -77,6 +77,10 @@ namespace CxxTest
                                  const char *expression, const char *type,
                                  bool otherThrown );
         void failedAssertThrowsNot( const char *file, unsigned line, const char *expression );
+
+        void setListener( TestListener *l );
+        void setSuite( const SuiteDescription *s );
+        void setTest( const TestDescription *t );
         
     private:
         TestTracker( const TestTracker & );
@@ -96,8 +100,6 @@ namespace CxxTest
         const WorldDescription &dummyWorld() const;
         
         void setWorld( const WorldDescription *w );
-        void setSuite( const SuiteDescription *s );
-        void setTest( const TestDescription *t );
         void countWarning();
         void countFailure();
 
@@ -105,7 +107,6 @@ namespace CxxTest
         
         TestTracker();
         void initialize();
-        void setListener( TestListener *l );
     };
 
     inline TestTracker &tracker() { return TestTracker::tracker(); }
