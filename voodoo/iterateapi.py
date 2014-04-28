@@ -40,6 +40,7 @@ class IterateAPI:
         if 'VOODOO_DEBUG_PREPROCESS_OUTPUT_FILE' in os.environ:
             os.system( "clang -E %s > %s" % ( " ".join( args ), os.environ[ 'VOODOO_DEBUG_PREPROCESS_OUTPUT_FILE' ] ) )
         translationUnit = index.parse( path = None, args = args )
+#translationUnit = index.parse( path = None, args = args, options = cindex.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES )
         if not translationUnit:
             raise Exception( "Unable to load '%s'" % filename )
         for diagnostic in translationUnit.diagnostics:
@@ -121,7 +122,6 @@ class IterateAPI:
         elif node.kind == cindex.CursorKind.CXX_METHOD:
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
-
             text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'const', 'override', 'noexcept' ] )
             returnType = self.__removeSpaceInsensitive( text, node.spelling )
             decomposition = functiondecomposition.FunctionDecomposition(
@@ -159,13 +159,16 @@ class IterateAPI:
 
     def __classInheritance( self, node ):
         inheritance = []
-        for child in node.get_children():
-            if child.kind != cindex.CursorKind.CXX_BASE_SPECIFIER:
-                break
-            protection = child.get_tokens().next().spelling
-            if protection not in [ 'public', 'protected' ]:
-                continue
-            inheritance.append( ( protection, self.__fullNamespaceType( child.type.get_declaration() ) ) )
+        try:
+            for child in node.get_children():
+                if child.kind != cindex.CursorKind.CXX_BASE_SPECIFIER:
+                    break
+                protection = child.get_tokens().next().spelling
+                if protection not in [ 'public', 'protected' ]:
+                    continue
+                inheritance.append( ( protection, self.__fullNamespaceType( child.type.get_declaration() ) ) )
+        except StopIteration:
+            pass
         return inheritance
 
     def __functionParameters( self, node ):
@@ -281,12 +284,12 @@ class IterateAPI:
         if len( tokens ) > 0 and tokens[ -1 ].spelling == terminatorCharacter:
             del tokens[ -1 ]
         if removeOneNonPunctuationTokenFromTheEnd:
-            if tokens[ -1 ].kind != cindex.TokenKind.PUNCTUATION:
+            if len( tokens ) > 0 and tokens[ -1 ].kind != cindex.TokenKind.PUNCTUATION:
                 if len( tokens ) >= 2 and tokens[ -2 ].spelling == '=' and \
                         tokens[ -1 ].spelling in [ '0' ]:
                     tokens.pop()
                 tokens.pop()
-            elif tokens[ -1 ].spelling == '=':
+            elif len( tokens ) > 0 and tokens[ -1 ].spelling == '=':
                 tokens.pop()
         while len( tokens ) > 0 and tokens[ -1 ].spelling in removeSuffixKeywords:
             tokens.pop()

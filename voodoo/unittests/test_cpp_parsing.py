@@ -77,17 +77,19 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
-#    def test_inheritance( self ):
-#        self._simpleTest( "class Yuvu {}; class Mushu {}; class Udu {}; class SuperDuper : Yuvu, public Mushu, private Udu {};", [
-#            dict( callbackName = "enterClass", name = "Yuvu", inheritance = [] ),
-#            dict( callbackName = "leaveClass" ),
-#            dict( callbackName = "enterClass", name = "Mushu", inheritance = [] ),
-#            dict( callbackName = "leaveClass" ),
-#            dict( callbackName = "enterClass", name = "Udu", inheritance = [] ),
-#            dict( callbackName = "leaveClass" ),
-#            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [ ( 'private', 'Yuvu' ), ( 'public', 'Mushu' ), ( 'private', 'Udu' ) ] ),
-#            dict( callbackName = "leaveClass" ),
-#        ] )
+    def test_inheritance( self ):
+        self._simpleTest( "class Yuvu {}; class Mushu {}; class Udu {}; class SuperDuper : Yuvu, public Mushu, protected Udu {};", [
+            dict( callbackName = "enterClass", name = "Yuvu", inheritance = [], fullTextNaked = "classYuvu{}" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "enterClass", name = "Mushu", inheritance = [], fullTextNaked = "classMushu{}" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "enterClass", name = "Udu", inheritance = [], fullTextNaked = "classUdu{}" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "enterClass", name = "SuperDuper",
+                inheritance = [ ( 'public', 'Mushu' ), ( 'protected', 'Udu' ) ],
+                fullTextNaked = "classSuperDuper:Yuvu,publicMushu,protectedUdu{}" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
 
     def test_methodDefinition( self ):
         self._simpleTest( "class SuperDuper { public: \nint aFunction( int a ) { return 0; }\n int c; };", [
@@ -317,6 +319,19 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "conversionFunction", conversionType = "int", const = False ),
             dict( callbackName = "leaveClass" ),
+        ] )
+
+#    def notest_CodeInMacro( self ):
+#        self._simpleTest( "#define X class SuperDuper { public: int aFunction( int a ) { return 0; } int c; }\nint c; X;", [
+#            dict( callbackName = "variableDeclaration", name = "c", text = "int c" ),
+#            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [],
+#                fullTextNaked = "classSuperDuper{public:intaFunction(inta){return0;}intc;}" ),
+#            dict( callbackName = "accessSpec", access = "public" ),
+#            dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
+#                returnType = "int", static = False, virtual = False, const = False, parameters = [
+#                dict( name = "a", text = "int a" ) ] ),
+#            dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
+#            dict( callbackName = "leaveClass" ),
         ] )
 
 if __name__ == '__main__':

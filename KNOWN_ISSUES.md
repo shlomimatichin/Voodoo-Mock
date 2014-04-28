@@ -6,3 +6,5 @@ Known Issues:
   voodoo/emulate_gcc_in_clang_preinclude.h . You might need to edit this
   file to force skipping of other issues not encoutered yet in voodoo
   development. If you do, please send a email or bug report our way.
+- code created from macros can be included, but not parsed correctly
+  to produce a valid header
