@@ -19,7 +19,7 @@ class ConstructorReferenceArgumentsCPP:
                 self._formatMembers()
 
     def _formatMembers( self ):
-        membersRaw = self._tab.produce( self._args.tabSize ) + ";\n".join( r[ 0 ] + ' ' + r[ 1 ] for r in self._parse.argumentsTwoColumTable() ) + ";\n"
+        membersRaw = self._tab.produce( self._args.tabSize ) + ";\n".join( r[ 0 ] + ' _' + r[ 1 ] for r in self._parse.argumentsTwoColumTable() ) + ";\n"
         parse = parsecppmemberlist.ParseCPPMemberList( membersRaw );
         return formatcolums.FormatColums( parse, self._args ).format()
 
@@ -29,7 +29,7 @@ class ConstructorReferenceArgumentsCPP:
         return self._tab.produce( size )
 
     def _formatInitializationList( self ):
-        return ",\n".join( self._indentation( '\t\t' ) + "_%s( %s )" % ( p, p ) for p in self._parameters() ) + '\n'
+        return ",\n".join( self._indentation( '\t' ) + "_%s( %s )" % ( p, p ) for p in self._parameters() ) + '\n'
 
     def _parameters( self ):
         return [ re.search( r"\w+", r[ 1 ] ).group( 0 ) for r in self._parse.rows() ]
