@@ -8,7 +8,7 @@ import preprocessor
 import argparse
 import traceback
 
-INCLUDE = [ r"\.h$", r"\.hh$", r"\.H$", r"\.HH$", r"\.hxx$", r"\.HXX$" ]
+INCLUDE = [ r"\.h$", r"\.hh$", r"\.H$", r"\.HH$", r"\.hxx$", r"\.HXX$", r"\.hpp$", r"\.HPP$" ]
 
 parser = argparse.ArgumentParser()
 parser.add_argument( "--inputPath", action = "append", default = [], help = "The directory to walk for header files. Can be specified more than once" )
@@ -76,7 +76,7 @@ def voodooOneFile( fullName, inputPath, fileList ):
     mkdirOf( fullOutput )
     output = ''
     try:
-        output += voodoo.voodoo(	input = fullName,
+        output += voodoo.voodoo(    input = fullName,
                                     output = fullOutput,
                                     pathToRemoveFromIdentifier = inputPath,
                                     voodooDBFile = args.voodooDB,
