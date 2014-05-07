@@ -23,7 +23,8 @@ command Coverage !python $VOODOO_ROOT_DIR/vim/coverage.py %
 command -range Colin :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columindent/configuredmain.py % indent
 command -range ColinDeclaration :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columindent/configuredmain.py % indentCPPDeclaration
 command -range ConstructorReferenceArguments :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/columindent/configuredmain.py % constructorReferenceArguments
-command -range DirtyTrace :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/dirtytrace.py %
+command -range DirtyTrace :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/dirtytrace.py trace %
+command -range DirtyBreakPoint :<line1>,<line2>!python $VOODOO_ROOT_DIR/vim/dirtytrace.py breakpoint %
 
 map <F6> :Colin<CR>
 "Fast movement in the location list:

@@ -1,0 +1,2 @@
+export VOODOO_ROOT_DIR=`realpath .`
+export VIMINIT="source $VOODOO_ROOT_DIR/vim/settings.vim"
