@@ -1,5 +1,6 @@
 from pyvoodoo.scenario import Scenario, ScenarioIterator
-from pyvoodoo.ultimateobject import UltimateObject 
+from pyvoodoo.ultimateobject import UltimateObject
+from pyvoodoo.ultimateobject import UltimateObjectNC
 from pyvoodoo.ultimateclass import UltimateClass
 from pyvoodoo.expectations import *
 from pyvoodoo.threadedhook import *

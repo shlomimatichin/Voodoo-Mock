@@ -57,3 +57,7 @@ class UltimateObject:
 					self._voodooPath ,
 					paramsRepr ,
 					"\n".join( [ str( e ) for e in exceptions ] ) ) )
+
+class UltimateObjectNC( UltimateObject, object ):
+    def __eq__( self, other ):
+        return other is self
