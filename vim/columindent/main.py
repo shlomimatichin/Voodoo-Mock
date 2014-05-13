@@ -8,8 +8,8 @@ import constructorreferenceargumentscpp
 import constructorreferenceargumentspy
 
 def main( args ):
-    input = sys.stdin.read()
-    if "" in input.rstrip().split( "\n" ):
+    input = sys.stdin.read().rstrip()
+    if "" in input.split( "\n" ):
         sys.stdout.write( "ERROR: Empty lines are not allowed in input" )
         exit( 1 )
 
