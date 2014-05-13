@@ -15,8 +15,11 @@ __VOODOO_MULTI_EXCLUDES = $(addprefix --exclude=,$(VOODOO_MULTI_EXCLUDES) '\b$(U
 __VOODOO_SINGLE_EXECUTABLE = $(__VOODOO_ENVIRONMENT) python $(VOODOO_ROOT_DIR)/voodoo/single.py
 __VOODOO_FLAGS = $(VOODOO_FLAGS) --voodooDB=$(UNITTEST_BUILD_DIRECTORY)/voodooDB.tmp $(VOODOO_INCLUDES)
 
+$(if $(filter-out %.cxx,$(CXXTEST_GENERATED)),
+	$(error "Unfamiliar extension for test suite files. Supported: $(__POSSIBLE_UNITTEST_SUFFIXES)))
+
 define template_per_TEST_FILE
-template_per_TEST_FILE_cxx = $$(patsubst %.h,$(UNITTEST_BUILD_DIRECTORY)/%.cxx,$$(subst /,_,$(1)))
+template_per_TEST_FILE_cxx = $$(filter %.cxx,$$(foreach suffix,$(__POSSIBLE_UNITTEST_SUFFIXES),$$(patsubst %$$(suffix),$(UNITTEST_BUILD_DIRECTORY)/%.cxx,$$(subst /,_,$(1)))))
 generateCxxtest: $$(template_per_TEST_FILE_cxx)
 $$(template_per_TEST_FILE_cxx): $(1)
 endef
