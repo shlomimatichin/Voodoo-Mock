@@ -14,7 +14,7 @@ __UNITTEST_INCLUDES = -I$(VOODOO_MIRROR_TREE) $(UNITTEST_INCLUDES)
 __UNITTEST_INCLUDES += -I$(VOODOO_ROOT_DIR)/voodoo -I$(VOODOO_ROOT_DIR)/cxxtest
 
 define template_per_TEST_FILE
-template_per_TEST_FILE_cxx = $$(patsubst %.h,$(UNITTEST_BUILD_DIRECTORY)/%.cxx,$$(subst /,_,$(1)))
+template_per_TEST_FILE_cxx = $$(addprefix $$(UNITTEST_BUILD_DIRECTORY)/,$$(addsuffix .cxx,$$(basename $$(subst /,_,$(1)))))
 template_per_TEST_FILE_bin = $$(patsubst %.cxx,%.bin,$$(template_per_TEST_FILE_cxx))
 template_per_TEST_FILE_o_deps = $$(patsubst %.cxx,%.o.deps,$$(template_per_TEST_FILE_cxx))
 buildTests: $$(template_per_TEST_FILE_bin)
