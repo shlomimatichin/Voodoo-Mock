@@ -6,7 +6,7 @@ function isPython {
     echo $SUITE | grep '\.py$' > /dev/null
 }
 function isCxxTest {
-    echo $SUITE | grep 'Test_.*\.h$' > /dev/null
+    echo $SUITE | grep 'Test_.*\.[hH].\?.\?$' > /dev/null
 }
 
 if isPython $SUITE; then
@@ -18,7 +18,7 @@ else
         exit 1
     fi
     TEST_NAME=`python $VOODOO_ROOT_DIR/pytest/findtestnamefromlinenumber.py $SUITE $TEST_LINE`
-    NO_EXT=`echo $SUITE | sed 's@\.h$@@'`
+    NO_EXT=`echo $SUITE | sed 's@\.[hH].\?.\?$@@'`
     NO_EXT_UNDERSCORE=`echo $NO_EXT | sed 's@/@_@g'`
     BIN=build_unittest/${NO_EXT_UNDERSCORE}.bin
     $BIN $TEST_NAME
