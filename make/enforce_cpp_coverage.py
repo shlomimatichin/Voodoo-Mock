@@ -113,8 +113,8 @@ if __name__ == "__main__":
                 "line to make this message go away. Make sure this is allowed " \
                 "under the coding policy in your project - someone turned on " \
                 "coverage enforcement for a reason"
-    for filename, line in sorted( enforcer.nonCodeLinesMarkedAsExempt() ):
-        print "%s:%d: COVERAGE_WARNING: non code line marked as exempt" % ( filename, line )
+    for filename, lineText in sorted( enforcer.nonCodeLinesMarkedAsExempt() ):
+        print "%s:%s: COVERAGE_WARNING: non code line marked as exempt" % ( filename, lineText.rstrip() )
         print "Hint: the compiler does not think this is a code block relevant for " \
                 "coverage tracking (like empty space or comment lines). " \
                 "Remove the LINE_EXEMPT_FROM_CODE_COVERAGE comment"
