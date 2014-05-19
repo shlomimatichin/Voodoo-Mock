@@ -23,7 +23,7 @@ def main( args ):
             print constructorreferenceargumentspy.ConstructorReferenceArgumentsPy( input, args ).format()
         else:
             assert False
-    elif args.filename.endswith( ".cpp" ) or args.filename.endswith( ".h" ):
+    elif args.filename.endswith( ".cpp" ) or args.filename.endswith( ".h" ) or args.filename.endswith( ".c" ):
         if args.cmd == "indent":
             classify = parsecpp.Classification( input )
             if classify.memberList():
