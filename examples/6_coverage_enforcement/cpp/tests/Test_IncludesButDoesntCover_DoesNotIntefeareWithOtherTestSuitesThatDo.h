@@ -8,5 +8,6 @@ public:
 	void test_DoesNothingButIncludeTheFile_EnforcementCodeDoesNotGetConfused()
 	{
 		TS_ASSERT_EQUALS( 1 + 1, 2 );
+		anotherFunction();
 	}
 };

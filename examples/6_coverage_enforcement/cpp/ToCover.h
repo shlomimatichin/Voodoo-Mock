@@ -13,4 +13,8 @@ void aFunction( T input )
 		input -= 2; // this line is not covered therefore its a coverage error
 }
 
+void anotherFunction()
+{
+}
+
 #endif // __TO_COVER_H__

@@ -10,6 +10,7 @@ class EnforceCPPCoverage:
     _FILE_EXEMPT_FROM_CODE_COVERAGE = 'FILE_EXEMPT_FROM_CODE_COVERAGE'
     _NON_COVERED_REGEX = re.compile( r"^    #####:\s*(\d+):" )
     _COVERED_REGEX = re.compile( r"^\s*\d+:\s*(\d+):" )
+    _NON_CODE_REGEX = re.compile( r"^\s*-:\s*(\d+):" )
 
     def __init__( self, filesToCover, unitTestExecutables ):
         self._filesToCover = set( filesToCover )
@@ -41,6 +42,9 @@ class EnforceCPPCoverage:
 
     def _conclude( self ):
         self._nonCoveredLines -= self._coveredLines
+        self._nonCodeLinesMarkedAsExempt -= self._coveredLines
+        self._nonCodeLinesMarkedAsExempt -= self._nonCoveredLines
+        self._nonCodeLinesMarkedAsExempt -= self._linesExemptFromCodeCoverage
         for filename in list( self._filesWithoutCoverageReport ):
             with open( filename ) as f:
                 if self._FILE_EXEMPT_FROM_CODE_COVERAGE in f.read():
@@ -68,7 +72,9 @@ class EnforceCPPCoverage:
             match = self._COVERED_REGEX.match( line )
             if match is None:
                 if self._LINE_EXEMPT_FROM_CODE_COVERAGE in line:
-                    self._nonCodeLinesMarkedAsExempt.add( ( sourceFilename, line ) )
+                    match = self._NON_CODE_REGEX.match( line )
+                    lineNumber = int( match.group( 1 ) )
+                    self._nonCodeLinesMarkedAsExempt.add( ( sourceFilename, lineNumber ) )
             else:
                 lineNumber = int( match.group( 1 ) )
                 self._coveredLines.add( ( sourceFilename, lineNumber ) )
@@ -113,8 +119,8 @@ if __name__ == "__main__":
                 "line to make this message go away. Make sure this is allowed " \
                 "under the coding policy in your project - someone turned on " \
                 "coverage enforcement for a reason"
-    for filename, lineText in sorted( enforcer.nonCodeLinesMarkedAsExempt() ):
-        print "%s:%s: COVERAGE_WARNING: non code line marked as exempt" % ( filename, lineText.rstrip() )
+    for filename, line in sorted( enforcer.nonCodeLinesMarkedAsExempt() ):
+        print "%s:%d: COVERAGE_WARNING: non code line marked as exempt" % ( filename, line )
         print "Hint: the compiler does not think this is a code block relevant for " \
                 "coverage tracking (like empty space or comment lines). " \
                 "Remove the LINE_EXEMPT_FROM_CODE_COVERAGE comment"
