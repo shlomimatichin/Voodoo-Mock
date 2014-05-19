@@ -10,7 +10,7 @@ class ConstructorReferenceArgumentsPy:
         self._parse = parsesimplecall.ParseSimpleCall( input )
 
     def format( self ):
-        return self._input + \
+        return self._input + "\n" + \
                 self._formatInitialization()
 
     def _indentation( self, add = "" ):
