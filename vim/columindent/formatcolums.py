@@ -34,7 +34,7 @@ class FormatColums:
 
     def _tail( self ):
         tail = self._parse.tail()
-        if not tail.isspace():
+        if len( tail ) > 0 and not tail.isspace():
             if self._args.noSpaceBeforeClosingParenthesis:
                 return tail
             return ' ' + tail
