@@ -666,19 +666,19 @@ private:
 
 	void compare( T & value )
 	{
-		if (value == 0) {
+		if ( value == 0 ) {
 			VoodooCommon::ErrorMessage error;
 			error.append( "Expected value '" );
 			error.append( VOODOO_TO_STRING( _value ) );
 			error.append( "', but found NULL" );
 			throw error;
 		}
-		if (memcmp(value, _value, _size) != 0) {
+		if ( memcmp( value, _value, _size ) != 0 ) {
 			VoodooCommon::ErrorMessage error;
 			error.append( "Expected value '" );
-			error.append( VOODOO_TO_STRING( _value ) );
-			error.append( "' to be equal to found value '" );
-			error.append( VOODOO_TO_STRING( value ) );
+			error.append( DataDumpString( _value, _size ).dataString() );
+			error.append( "' to be memory wise identical to found value '" );
+			error.append( DataDumpString( value, _size ).dataString() );
 			error.append( "'" );
 			throw error;
 		}	

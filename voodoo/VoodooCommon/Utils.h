@@ -17,7 +17,7 @@
 #define _VOODOO_TEMPLATE_INSTANCE_OF_THIS_FUNCTION( identifier ) \
 	( ( strstr( __FUNCTION__ , identifier "<" ) != 0 ) ? \
 	  		( strstr( __FUNCTION__, identifier "<" ) ) : \
-	  		( identifier ) ) 
+			( identifier ) )
 
 #define VOODOO_ASSERT( x ) if ( ! ( x ) ) { VOODOO_FAIL_TEST( "Internal Voodoo Error: should not be reached" ); }
 
@@ -119,26 +119,12 @@ public:
 	template < typename T >
 	DataDumpString( T & t )
 	{
-		#define TRUNCATED_MESSAGE "\t\n (Data truncated, you can increase VOODOO_MAX_DATA_DUMP)"
-		unsigned stringLength = 0;
-		unsigned size = sizeof( t );
-		unsigned pos = 0;
-		while ( pos < size ) {
-			VOODOO_ASSERT( stringLength < VOODOO_MAX_DATA_DUMP );
-			if ( stringLength > VOODOO_MAX_DATA_DUMP - 100 ) {
-				memcpy( _dataString + stringLength, TRUNCATED_MESSAGE, sizeof( TRUNCATED_MESSAGE ) );
-				return;
-			}
-			if ( pos % 8 == 0 ) {
-				_dataString[ stringLength ] = '\n';
-				++ stringLength;
-			}
-			unsigned char byte = ( (unsigned char *) & t )[ pos ];
-			stringLength += appendHexByte( _dataString + stringLength, byte );
-			_dataString[ stringLength ] = ' ';
-			++ stringLength;
-			++ pos;
-		}
+		fromPointerLength( & t, sizeof( t ) );
+	}
+
+	DataDumpString( const void * pointer, size_t size )
+	{
+		fromPointerLength( pointer, size );
 	}
 
 	const char * dataString() const { return _dataString ; }
@@ -160,6 +146,29 @@ private:
 		string[ 0 ] = toHex( ( byte >> 4 ) & 0xF );
 		string[ 1 ] = toHex( ( byte >> 0 ) & 0xF );
 		return 2;
+	}
+
+	void fromPointerLength( const void * pointer, size_t size )
+	{
+		#define TRUNCATED_MESSAGE "\t\n (Data truncated, you can increase VOODOO_MAX_DATA_DUMP)"
+		unsigned stringLength = 0;
+		unsigned pos = 0;
+		while ( pos < size ) {
+			VOODOO_ASSERT( stringLength < VOODOO_MAX_DATA_DUMP );
+			if ( stringLength > VOODOO_MAX_DATA_DUMP - 100 ) {
+				memcpy( _dataString + stringLength, TRUNCATED_MESSAGE, sizeof( TRUNCATED_MESSAGE ) );
+				return;
+			}
+			if ( pos % 8 == 0 ) {
+				_dataString[ stringLength ] = '\n';
+				++ stringLength;
+			}
+			unsigned char byte = ( (unsigned char *) pointer )[ pos ];
+			stringLength += appendHexByte( _dataString + stringLength, byte );
+			_dataString[ stringLength ] = ' ';
+			++ stringLength;
+			++ pos;
+		}
 	}
 };
 
