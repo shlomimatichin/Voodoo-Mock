@@ -23,6 +23,7 @@ class SavingIterator( iterateapi.IterateAPI ):
         self._addSaver( 'enterNamespace' )
         self._addSaver( 'leaveNamespace' )
         self._addSaver( 'accessSpec' )
+        self._addSaver( 'using' )
 
     def _addSaver( self, callName ):
         setattr( self, callName, lambda ** kwargs: self._save( callName, ** kwargs ) )

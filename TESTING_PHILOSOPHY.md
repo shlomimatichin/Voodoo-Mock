@@ -17,10 +17,11 @@ Good Unit-Test:
 - Test function name is detailed enough to catch which flow is implemented,
   and whats the difference from adjacent tests.
 - Acts as a detailed documentation for other readers (or yourself few months
-  from now).
+  from now). Readable / self-explainatory code (with few exceptions, e.g.,
+  magic numbers allowed).
 - The unit under tests is logically separated from other layers in the code.
 - Encourages you to write better designed code.
-- Reproduces a found bug - and acts as regression for its return.
+- Reproduces a found bug - and acts as regression against its return.
 
 Bad Unit-Test:
 --------------
@@ -53,4 +54,5 @@ Bad Unit-Test:
   a test for the missing flow. Do not write tests to "make the coverage tool
   happy" - you will just end up with crap. The packaged makefiles contain
   a feature to enforce code coverage. Turning it on just to produce crap
-  tests is not a good idea.
+  tests is not a good idea. Example: testing a 'close' function without
+  calling 'open' first - there is no such flow.

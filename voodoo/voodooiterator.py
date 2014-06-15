@@ -70,6 +70,11 @@ class VoodooIterator( iterateapi.IterateAPI ):
             return
         self._textOut( text )
 
+    def using( self, text ):
+        if self._protectionIgnoring.ignore():
+            return
+        self._textOut( text )
+
     def functionForwardDeclaration( self, decomposition ):
         if self._protectionIgnoring.ignore():
             return

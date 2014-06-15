@@ -332,6 +332,13 @@ class TestCParsing( unittest.TestCase ):
 #                dict( name = "a", text = "int a" ) ] ),
 #            dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
 #            dict( callbackName = "leaveClass" ),
+#        ] )
+
+    def test_usingNamespace( self ):
+        self._simpleTest( "namespace A {} using namespace A;", [
+            dict( callbackName = "enterNamespace", name = "A" ),
+            dict( callbackName = "leaveNamespace" ),
+            dict( callbackName = "using", text = "using namespace A" )
         ] )
 
 if __name__ == '__main__':

@@ -30,6 +30,7 @@ class VoodooDBIterator( iterateapi.IterateAPI ):
     def enterNamespace( self, ** kwargs ): pass
     def leaveNamespace( self, ** kwargs ): pass
     def accessSpec( self, ** kwargs ): pass
+    def using( self, ** kwargs ): pass
 
     def functionForwardDeclaration( self, decomposition ):
         self._db[ self._fullIdentifier( decomposition.name ) ] = decomposition

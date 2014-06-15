@@ -43,6 +43,7 @@ class VoodooMultiplexerIterator( iterateapi.IterateAPI ):
         self.enterNamespace = MethodMultiplexer( self, "enterNamespace" )
         self.leaveNamespace = MethodMultiplexer( self, "leaveNamespace" )
         self.accessSpec = MethodMultiplexer( self, "accessSpec" )
+        self.using = MethodMultiplexer( self, "using" )
 
     def iter( self ):
         return self._iter.out()

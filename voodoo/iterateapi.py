@@ -30,6 +30,7 @@ class IterateAPI:
     def enterNamespace( self, name ): assert False, "Please override in deriving class"
     def leaveNamespace( self ): assert False, "Please override in deriving class"
     def accessSpec( self, access ): assert False, "Please override in deriving class"
+    def using( self, text ): assert False, "Please override in deriving class"
 
     def process( self, filename, includes = [], defines = [], preIncludes = [] ):
         index = cindex.Index.create()
@@ -146,6 +147,9 @@ class IterateAPI:
         elif node.kind == cindex.CursorKind.CXX_ACCESS_SPEC_DECL:
             access = node.get_tokens().next().spelling
             self.accessSpec( access = access )
+        elif node.kind == cindex.CursorKind.USING_DIRECTIVE:
+            text = self.__nodeText( node )
+            self.using( text = text )
         elif node.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
             pass
         elif node.kind == cindex.CursorKind.UNION_DECL:
