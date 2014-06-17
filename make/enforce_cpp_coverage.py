@@ -42,6 +42,9 @@ class EnforceCPPCoverage:
 
     def _conclude( self ):
         self._nonCoveredLines -= self._coveredLines
+        for filename, line in list( self._nonCoveredLines ):
+            if filename in self._filesExemptFromCodeCoverage:
+                self._nonCoveredLines.remove( ( filename, line ) )
         self._nonCodeLinesMarkedAsExempt -= self._coveredLines
         self._nonCodeLinesMarkedAsExempt -= self._nonCoveredLines
         self._nonCodeLinesMarkedAsExempt -= self._linesExemptFromCodeCoverage
@@ -60,6 +63,8 @@ class EnforceCPPCoverage:
         self._filesWithoutCoverageReport.discard( sourceFilename )
         for line in lines:
             self._readGCOVLine( line, sourceFilename )
+            if self._FILE_EXEMPT_FROM_CODE_COVERAGE in line:
+                self._filesExemptFromCodeCoverage.add( sourceFilename )
 
     def _readGCOVLine( self, line, sourceFilename ):
         if line.startswith( self._NON_COVERED_PREFIX ):

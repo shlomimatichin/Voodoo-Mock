@@ -1,6 +1,8 @@
 #ifndef __TO_COVER_H__
 #define __TO_COVER_H__
 
+#include "SemiCoveredExemptFile.h"
+
 template < typename T >
 void aFunction( T input )
 {
@@ -11,6 +13,7 @@ void aFunction( T input )
 	// LINE_EXEMPT_FROM_CODE_COVERAGE
 	if ( input == 10 )
 		input -= 2; // this line is not covered therefore its a coverage error
+	semiCoveredFunction( 10 );
 }
 
 void anotherFunction()
