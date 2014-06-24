@@ -12,12 +12,13 @@ import pwd
 import json
 import argparse
 
-PYTESTDIR = os.path.join( os.path.dirname( sys.argv[ 0 ] ), ".." )
+PYTESTDIR = os.path.dirname( sys.argv[ 0 ] )
 PYTESTRUNNER = os.path.join( PYTESTDIR, "pytestrunner.py" )
 
 parser = argparse.ArgumentParser()
 parser.add_argument( "suites", nargs = '+' )
 parser.add_argument( "--coverage", action = "store_true" )
+parser.add_argument( "--coverageFlags", default = "--branch" )
 parser.add_argument( "--verbose", action = "store_true" )
 parser.add_argument( "--jobs", type = int, default = 4 )
 parser.add_argument( "--cacheFile", default = "testharnesscache.tmp" )
@@ -36,8 +37,9 @@ def isCppTestSuite( suite ):
 def popenSuite( suite ):
     if isPythonTestSuite( suite ):
         if args.coverage:
-            return subprocess.Popen( [ 'coverage', 'run', '--append', '--branch', PYTESTRUNNER,
-                                            "--verbose", suite ],
+            coverageFlags = args.coverageFlags.split(" ")
+            return subprocess.Popen( [ 'coverage', 'run', '--append' ] + coverageFlags +
+                                    [ PYTESTRUNNER, "--verbose", suite ],
                                     stdout = subprocess.PIPE,
                                     stderr = subprocess.STDOUT )
         else:
