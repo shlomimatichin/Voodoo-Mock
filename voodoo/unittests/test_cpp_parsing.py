@@ -321,7 +321,7 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
-#    def notest_CodeInMacro( self ):
+#    def test_CodeInMacro( self ):
 #        self._simpleTest( "#define X class SuperDuper { public: int aFunction( int a ) { return 0; } int c; }\nint c; X;", [
 #            dict( callbackName = "variableDeclaration", name = "c", text = "int c" ),
 #            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [],
@@ -339,6 +339,16 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "enterNamespace", name = "A" ),
             dict( callbackName = "leaveNamespace" ),
             dict( callbackName = "using", text = "using namespace A" )
+        ] )
+
+    def test_templateMethod( self ):
+        self._simpleTest( "class A {template < typename T > int aFunction( T a ) { return 0; }};", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                fullTextNaked = "classA{template<typenameT>intaFunction(Ta){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "template < typename T >", name = "aFunction",
+                text = "aFunction", returnType = "int", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "T a" ) ] ),
+            dict( callbackName = "leaveClass" ),
         ] )
 
 if __name__ == '__main__':

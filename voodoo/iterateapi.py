@@ -120,18 +120,24 @@ class IterateAPI:
                                                                 static = None,
                                                                 const = False )
             self.constructorDefinition( decomposition = decomposition )
-        elif node.kind == cindex.CursorKind.CXX_METHOD:
+        elif node.kind == cindex.CursorKind.CXX_METHOD or node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
             text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'const', 'override', 'noexcept' ] )
             returnType = self.__removeSpaceInsensitive( text, node.spelling )
+            templatePrefix = ""
+            if node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
+                templatePrefix = self.__templatePrefix( node )
+                assert returnType.startswith( templatePrefix ), "'%s' '%s'" % ( returnType, templatePrefix )
+                returnType = returnType[ len( templatePrefix ) : ].lstrip()
             decomposition = functiondecomposition.FunctionDecomposition(
                                                                 name = node.spelling,
                                                                 text = node.spelling,
                                                                 parameters = parameters,
                                                                 returnType = returnType,
                                                                 static = node.is_static_method(),
-                                                                const = self.__isMethodConst( node ))
+                                                                const = self.__isMethodConst( node ),
+                                                                templatePrefix = templatePrefix )
             self.method( decomposition = decomposition )
         elif node.kind == cindex.CursorKind.CONVERSION_FUNCTION:
             assert node.spelling.startswith( "operator" )
@@ -177,6 +183,10 @@ class IterateAPI:
 
     def __functionParameters( self, node ):
         return [ child for child in node.get_children() if child.kind == cindex.CursorKind.PARM_DECL ]
+
+    def __templatePrefix( self, node ):
+        children = [ child for child in node.get_children() if child.kind == cindex.CursorKind.TEMPLATE_TYPE_PARAMETER ]
+        return "template < " + " ".join( self.__nodeText( child ) for child in children )
 
     def __parseParameter( self, node, lastParameter ):
         terminator = ')' if lastParameter else ','
