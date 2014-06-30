@@ -123,7 +123,7 @@ class IterateAPI:
         elif node.kind == cindex.CursorKind.CXX_METHOD or node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
-            text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'const', 'override', 'noexcept' ] )
+            text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'const', 'override', 'noexcept', 'final' ] )
             returnType = self.__removeSpaceInsensitive( text, node.spelling )
             templatePrefix = ""
             if node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:

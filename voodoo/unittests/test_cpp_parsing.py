@@ -351,5 +351,21 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
+    def test_ClassInheritanceOverrideFinalMethod( self ):
+        self._simpleTest( "class AInterface { virtual int f() = 0; static int a;};\nclass B : public AInterface { int f() override final { return 0; }};", [
+            dict( callbackName = "enterClass", name = "AInterface", inheritance = [],
+                fullTextNaked = "classAInterface{virtualintf()=0;staticinta;}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
+                returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
+            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'AInterface' ) ],
+                fullTextNaked = "classB:publicAInterface{intf()overridefinal{return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
+                returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+
 if __name__ == '__main__':
     unittest.main()

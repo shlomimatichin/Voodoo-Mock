@@ -3,8 +3,10 @@ all: build unittest
 build: build_examples
 clean: clean_examples
 
-unittest:
+unittest: unittest_c unittest_cpp
+unittest_c:
 	cd voodoo; PYTHONPATH=. LD_LIBRARY_PATH=. python unittests/test_c_parsing.py
+unittest_cpp:
 	cd voodoo; PYTHONPATH=. LD_LIBRARY_PATH=. python unittests/test_cpp_parsing.py
 
 clean_examples:
