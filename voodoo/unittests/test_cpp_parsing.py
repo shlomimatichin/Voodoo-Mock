@@ -17,7 +17,7 @@ class TestCParsing( unittest.TestCase ):
 
     def _gccCPPIncludeDir( self ):
         if not hasattr( self, '_gccCPPIncludeDirCache' ):
-            stdarg = subprocess.check_output( "locate stdarg.h | grep '/stdarg.h$' | grep '^/usr' | grep gcc", shell = True, stderr = subprocess.STDOUT ).strip()
+            stdarg = subprocess.check_output( "find /usr/lib/gcc -name stdarg.h", shell = True, stderr = subprocess.STDOUT ).strip()
             self._gccCPPIncludeDirCache = os.path.dirname( stdarg )
         return self._gccCPPIncludeDirCache
 
