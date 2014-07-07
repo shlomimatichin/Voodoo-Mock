@@ -9,7 +9,7 @@ class EnforceCPPCoverage:
     _LINE_EXEMPT_FROM_CODE_COVERAGE = 'LINE_EXEMPT_FROM_CODE_COVERAGE'
     _FILE_EXEMPT_FROM_CODE_COVERAGE = 'FILE_EXEMPT_FROM_CODE_COVERAGE'
     _NON_COVERED_REGEX = re.compile( r"^    #####:\s*(\d+):" )
-    _COVERED_REGEX = re.compile( r"^\s*\d+:\s*(\d+):" )
+    _COVERED_REGEX = re.compile( r"^\s*\-?\d+:\s*(\d+):" )
     _NON_CODE_REGEX = re.compile( r"^\s*-:\s*(\d+):" )
 
     def __init__( self, filesToCover, unitTestExecutables ):
