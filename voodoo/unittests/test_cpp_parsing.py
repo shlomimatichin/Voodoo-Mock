@@ -366,6 +366,16 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
+    def test_usingNotANamespace( self ):
+        self._simpleTest( "namespace A { int a; } namespace B { using A::a; }", [
+            dict( callbackName = "enterNamespace", name = "A" ),
+            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "leaveNamespace" ),
+            dict( callbackName = "enterNamespace", name = "B" ),
+            dict( callbackName = "using", text = "using A :: a" ),
+            dict( callbackName = "leaveNamespace" ),
+        ] )
+
 
 if __name__ == '__main__':
     unittest.main()
