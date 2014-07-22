@@ -9,7 +9,7 @@ class VoodooMock:
                     fullIdentifier,
                     code,
                     perFileSettings,
-                    template,
+                    templatePrefix,
                     templateParametersList ):
         self._identifier = identifier
         self._inherits = perFileSettings.filterInherits( inherits )
@@ -17,9 +17,9 @@ class VoodooMock:
         self._fullIdentifier = fullIdentifier
         self._code = code
         self._perFileSettings = perFileSettings
-        self._template = template
-        if len( template ) > 0:
-            self._template += "\n"
+        self._templatePrefix = templatePrefix
+        if len( templatePrefix ) > 0:
+            self._templatePrefix += "\n"
         self._templateParametersList = templateParametersList
         self._mockClass = voodoodefs.mockClass( identifier )
         self._fullMockClass = fullIdentifier[ : - len( identifier ) ] + self._mockClass
@@ -140,7 +140,7 @@ class VoodooMock:
         inherits = ""
         if len( self._inherits ) > 0:
             inherits = " :\n\t\tpublic " + ",\n\t\tpublic ".join( self._inherits ) + "\n"
-        self._code.lineOut( "%s%s %s%s" % ( self._template, self._construct,
+        self._code.lineOut( "%s%s %s%s" % ( self._templatePrefix, self._construct,
                                     self._identifier, inherits ) )
         self._code.lineOut( "{" )
         self._code.increaseIndent()
@@ -269,12 +269,12 @@ class VoodooMock:
         self._code.lineOut( "" )
 
     def _templatedIdentifier( self ):
-        if len( self._template ) == 0:
+        if len( self._templatePrefix ) == 0:
             return self._identifier
         return self._identifier + "< " + ', '.join( self._templateParametersList ) + " >"
 
     def implementMockClass( self ):
-        self._code.lineOut( "%sclass %s : public %s" % (    self._template,
+        self._code.lineOut( "%sclass %s : public %s" % (    self._templatePrefix,
                                                             self._mockClass,
                                                             self._templatedIdentifier() ) )
         self._code.lineOut( "{" )

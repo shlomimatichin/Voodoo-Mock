@@ -3,14 +3,14 @@ from voodooexpectfunction import VoodooExpectFunction
 import functiondecomposition
 
 class VoodooExpect:
-    def __init__( self, code, identifier, fullIdentifier, construct, inherits, template,
+    def __init__( self, code, identifier, fullIdentifier, construct, inherits, templatePrefix,
                     templateParametersList, perFileSettings ):
         self._code = code
         self._identifier = identifier
         self._fullIdentifier = fullIdentifier
         self._construct = construct
         self._inherits = perFileSettings.filterInherits( inherits )
-        self._template = template
+        self._templatePrefix = templatePrefix
         self._templateParametersList = templateParametersList
         self._perFileSettings = perFileSettings
         self._constructorCount = 0
@@ -111,7 +111,7 @@ class VoodooExpect:
         else:
             inherits = ""
         self._code.lineOut( "%s%s %s%s" % (
-                                voodoodefs.templateLine( self._template ),
+                                voodoodefs.templateLine( self._templatePrefix ),
                                 self._construct,
                                 self._identifier,
                                 inherits ) )
@@ -254,7 +254,7 @@ class VoodooExpect:
     def implementFakeClass( self, fullIdentifier ):
         fakeClass = voodoodefs.fakeClass( self._identifier )
         self._code.lineOut( "%sclass %s : public %s%s" % (
-                                voodoodefs.templateLine( self._template ),
+                                voodoodefs.templateLine( self._templatePrefix ),
                                 fakeClass,
                                 self._identifier,
                                 self._passTemplateParameters() ) )
@@ -274,7 +274,7 @@ class VoodooExpect:
     def implementFakeNDClass( self, fullIdentifier ):
         fakeNDClass = voodoodefs.fakeNDClass( self._identifier )
         self._code.lineOut( "%sclass %s : public %s%s" % (
-                                voodoodefs.templateLine( self._template ),
+                                voodoodefs.templateLine( self._templatePrefix ),
                                 fakeNDClass,
                                 self._identifier,
                                 self._passTemplateParameters() ) )
@@ -299,6 +299,6 @@ class VoodooExpect:
 
     def _passTemplateParameters( self ):
         if self._templateParametersList:
-            return "< " + ", ".join( self._templateParamtersList ) + " >"
+            return "< " + ", ".join( self._templateParametersList ) + " >"
         else:
             return ""

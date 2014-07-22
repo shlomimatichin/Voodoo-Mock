@@ -105,11 +105,11 @@ class VoodooIterator( iterateapi.IterateAPI ):
             mock.implementMethod( decomposition )
 
     def enterStruct( self, name, inheritance, fullText ):
-        self._enterConstruct( name, inheritance, fullText, 'struct', 'public' )
+        self._enterConstruct( name, inheritance, "", None, fullText, 'struct', 'public' )
     def leaveStruct( self ):
         self._leaveConstruct()
-    def enterClass( self, name, inheritance, fullText ):
-        self._enterConstruct( name, inheritance, fullText, 'class', 'private' )
+    def enterClass( self, name, inheritance, templatePrefix, templateParametersList, fullText ):
+        self._enterConstruct( name, inheritance, templatePrefix, templateParametersList, fullText, 'class', 'private' )
     def leaveClass( self ):
         self._leaveConstruct()
 
@@ -155,7 +155,7 @@ class VoodooIterator( iterateapi.IterateAPI ):
             self._protectionIgnoring.enter( defaultProtection )
         return not self._protectionIgnoring.ignoreButLast()
 
-    def _enterConstruct( self, name, inheritance, fullText, construct, defaultProtection ):
+    def _enterConstruct( self, name, inheritance, templatePrefix, templateParametersList, fullText, construct, defaultProtection ):
         if not self.shouldImplementEnterConstruct( name, fullText, defaultProtection ):
             return
         mock = VoodooMock(  construct = construct,
@@ -164,8 +164,8 @@ class VoodooIterator( iterateapi.IterateAPI ):
                             fullIdentifier = self.fullIdentifier( name ),
                             code = self._code,
                             perFileSettings = self._perFileSettings,
-                            template = "",
-                            templateParametersList = None )
+                            templatePrefix = templatePrefix,
+                            templateParametersList = templateParametersList )
         mock.implementRedirectorClassHeader()
         self._voodoomocks.append( mock )
         self.inClass.append( name )

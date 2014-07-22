@@ -15,7 +15,7 @@ class IterateAPI:
     def structForwardDeclaration( self, name ): assert False, "Please override in deriving class"
     def enterStruct( self, name, inheritance, fullText ): assert False, "Please override in deriving class"
     def leaveStruct( self ): assert False, "Please override in deriving class"
-    def enterClass( self, name, inheritance, fullText ): assert False, "Please override in deriving class"
+    def enterClass( self, name, inheritance, templatePrefix, templateParametersList, fullText ): assert False, "Please override in deriving class"
     def leaveClass( self ): assert False, "Please override in deriving class"
     def variableDeclaration( self, name, text ): assert False, "Please override in deriving class"
     def typedef( self, name, text ): assert False, "Please override in deriving class"
@@ -67,8 +67,19 @@ class IterateAPI:
             self.leaveStruct()
         elif node.kind == cindex.CursorKind.CLASS_DECL and node.is_definition():
             self.enterClass( name = node.spelling, inheritance = self.__classInheritance( node ),
+                    templatePrefix = "", templateParametersList = None,
                     fullText = self.__nodeText( node, removeEverythingAfterLastClosingBrace = True ) )
             for child in node.get_children():
+                self.__iterateNode( child )
+            self.leaveClass()
+        elif node.kind == cindex.CursorKind.CLASS_TEMPLATE and node.is_definition():
+            self.enterClass( name = node.spelling, inheritance = self.__classInheritance( node ),
+                    templatePrefix = self.__templatePrefix( node ),
+                    templateParametersList = self.__templateParametersList( node ),
+                    fullText = self.__nodeText( node, removeEverythingAfterLastClosingBrace = True ) )
+            for child in node.get_children():
+                if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ]:
+                    continue
                 self.__iterateNode( child )
             self.leaveClass()
         elif node.kind == cindex.CursorKind.UNEXPOSED_DECL: #extern "C"
@@ -120,7 +131,7 @@ class IterateAPI:
                                                                 static = None,
                                                                 const = False )
             self.constructorDefinition( decomposition = decomposition )
-        elif node.kind == cindex.CursorKind.CXX_METHOD or node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
+        elif node.kind in [ cindex.CursorKind.CXX_METHOD, cindex.CursorKind.FUNCTION_TEMPLATE ]:
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
             text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'const', 'override', 'noexcept', 'final' ] )
@@ -188,8 +199,13 @@ class IterateAPI:
         return [ child for child in node.get_children() if child.kind == cindex.CursorKind.PARM_DECL ]
 
     def __templatePrefix( self, node ):
-        children = [ child for child in node.get_children() if child.kind == cindex.CursorKind.TEMPLATE_TYPE_PARAMETER ]
+        children = [ child for child in node.get_children()
+                if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ] ]
         return "template < " + " ".join( self.__nodeText( child ) for child in children )
+
+    def __templateParametersList( self, node ):
+        return [ child.spelling for child in node.get_children()
+                if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ] ]
 
     def __parseParameter( self, node, lastParameter ):
         terminator = ')' if lastParameter else ','

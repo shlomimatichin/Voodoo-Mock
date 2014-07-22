@@ -36,25 +36,25 @@ class VoodooExpectIterator( VoodooIterator ):
             self._expect[ -1 ].method( decomposition )
 
     def enterStruct( self, name, inheritance, fullText ):
-        self._enterConstruct( name, inheritance, fullText, 'struct', 'public' )
+        self._enterConstruct( name, inheritance, "", None, fullText, 'struct', 'public' )
     def leaveStruct( self ):
         self._leaveConstruct()
-    def enterClass( self, name, inheritance, fullText ):
-        self._enterConstruct( name, inheritance, fullText, 'class', 'private' )
+    def enterClass( self, name, inheritance, templatePrefix, templateParametersList, fullText ):
+        self._enterConstruct( name, inheritance, templatePrefix, templateParametersList, fullText, 'class', 'private' )
     def leaveClass( self ):
         self._leaveConstruct()
 
-    def _enterConstruct( self, name, inheritance, fullText, construct, defaultProtection ):
+    def _enterConstruct( self, name, inheritance, templatePrefix, templateParametersList, fullText, construct, defaultProtection ):
         if not self.shouldImplementEnterConstruct( name, fullText, defaultProtection ):
             return
-        expect = VoodooExpect(	code = self.code(),
-								identifier = name,
+        expect = VoodooExpect(  code = self.code(),
+                                identifier = name,
                                 fullIdentifier = self.fullIdentifier( name ),
-								construct = construct,
-								inherits = [ identifier for protection, identifier in inheritance ],
+                                construct = construct,
+                                inherits = [ identifier for protection, identifier in inheritance ],
                                 perFileSettings = self._perFileSettings,
-                                template = "",
-                                templateParametersList = None )
+                                templatePrefix = templatePrefix,
+                                templateParametersList = templateParametersList )
         expect.implementExpectingClassHeader()
         self._expect.append( expect )
         self.inClass.append( name )
