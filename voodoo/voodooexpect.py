@@ -153,7 +153,7 @@ class VoodooExpect:
         if self._constructorCount == 0:
             self._code.increaseIndent()
             decomposition = functiondecomposition.FunctionDecomposition( name = self._identifier, parameters = [],
-                            text = self._identifier, returnType = None, static = False, const = False )
+                            text = self._identifier, returnRValue = False, returnType = None, static = False, const = False )
             self.constructor( decomposition )
             self._code.decreaseIndent()
         if self._implicitAssignmentOperator:
@@ -163,6 +163,7 @@ class VoodooExpect:
                             parameters = [ dict( name = "other", text = "const %s & other" % self._identifier ) ],
                             text = "%s & operator=" % self._identifier,
                             returnType = "%s &" % self._identifier,
+			                 returnRValue = False,
                             static = False,
                             const = False )
             self.method( decomposition )

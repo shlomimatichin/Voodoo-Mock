@@ -5,7 +5,7 @@ import pprint
 import subprocess
 import os
 
-class TestCParsing( unittest.TestCase ):
+class TestCPPParsing( unittest.TestCase ):
     def setUp( self ):
         self.maxDiff = None
 
@@ -71,7 +71,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classSuperDuper{public:SuperDuper(inta,constchar*b){}intc;}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "constructorDefinition", templatePrefix = "", name = "SuperDuper", text = "SuperDuper",
-                returnType = None, static = None, virtual = False, const = False, parameters = [
+                returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
                 dict( name = "a", text = "int a" ),
                 dict( name = "b", text = "const char * b" ), ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
@@ -102,7 +102,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classSuperDuper{public:intaFunction(inta){return0;}intc;}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnType = "int", static = False, virtual = False, const = False, parameters = [
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [
                 dict( name = "a", text = "int a" ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
@@ -114,7 +114,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classSuperDuper{public:intaFunction(inta);intc;}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnType = "int", static = False, virtual = False, const = False, parameters = [
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [
                 dict( name = "a", text = "int a" ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
@@ -126,7 +126,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classSuperDuper{public:staticintaFunction(inta);intc;}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnType = "int", static = True, virtual = False, const = False, parameters = [
+                returnRValue = False, returnType = "int", static = True, virtual = False, const = False, parameters = [
                 dict( name = "a", text = "int a" ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
@@ -138,7 +138,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classSuperDuper{public:intaFunction(inta)const;intc;}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnType = "int", static = False, virtual = False, const = True, parameters = [
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = True, parameters = [
                 dict( name = "a", text = "int a" ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
@@ -147,7 +147,7 @@ class TestCParsing( unittest.TestCase ):
     def test_functionReturningStdString( self ):
         self._simpleTest( "#include <string>\nstd::string theString();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "theString", text = "std :: string theString",
-                returnType = "std :: string", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = True, returnType = "std :: string", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ClassInheritance( self ):
@@ -177,7 +177,7 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "Result & getResult",
-                returnType = "Result &", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "Result &", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ConstLValueReference( self ):
@@ -187,7 +187,7 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "const Result & getResult",
-                returnType = "const Result &", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "const Result &", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturningPointer( self ):
@@ -197,20 +197,20 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "Result * getResult",
-                returnType = "Result *", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "Result *", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturnTypeIsSharedPtr( self ):
         self._testWithHeaders( "template < typename T > class sharedptr {};", "sharedptr< int > func();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "func", text = "sharedptr < int > func",
-                returnType = "sharedptr < int >", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = True, returnType = "sharedptr < int >", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturnTypeIsSharedPtr_FunctionDefinition( self ):
         self._testWithHeaders( "template < typename T > class sharedptr {};",
                                 "sharedptr< int > func() { return sharedptr< int >(); }", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "sharedptr < int > func",
-                returnType = "sharedptr < int >", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = True, returnType = "sharedptr < int >", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturnTypeIsSharedPtr_Method( self ):
@@ -220,7 +220,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classA{public:sharedptr<int>func(){returnsharedptr<int>();}}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "func", text = "func",
-                returnType = "sharedptr < int >", static = False, virtual = False, const = False, parameters = [] ),
+                returnRValue = True, returnType = "sharedptr < int >", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -231,7 +231,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classA{public:constsharedptr<int>func()const{returnsharedptr<int>();}}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "func", text = "func",
-                returnType = "const sharedptr < int >", static = False, virtual = False, const = True, parameters = [] ),
+                returnRValue = True, returnType = "const sharedptr < int >", static = False, virtual = False, const = True, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -241,7 +241,7 @@ class TestCParsing( unittest.TestCase ):
                 fullTextNaked = "classA{public:booloperator==(intother){returntrue;}}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "operator==", text = "operator==",
-                returnType = "bool", static = False, virtual = False, const = False, parameters = [
+                returnRValue = False, returnType = "bool", static = False, virtual = False, const = False, parameters = [
                     dict( name = "other", text = "int other" ) ] ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -249,15 +249,15 @@ class TestCParsing( unittest.TestCase ):
     def test_Bugfix_ExplicilyRemoveCommentTokens( self ):
         self._simpleTest( "void /*hello*/ func() /* bye */ {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "void func",
-                returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_Bugfix_TrailingStaticKeywordInFunctionDefinition( self ):
         self._simpleTest( "void func() {} static void func2() {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "void func",
-                returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func2", text = "void func2",
-                returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_Bugfix_PureVirtualNotParsedCorrectly( self ):
@@ -265,7 +265,7 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classSuperDuper{virtualvoidaFunction()=0;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -274,7 +274,7 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classSuperDuper{virtualvoidaFunction()const=0;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnType = "void", static = False, virtual = False, const = True, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = False, const = True, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -283,13 +283,13 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "AInterface", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classAInterface{virtualintf()const=0;staticinta;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
-                returnType = "int", static = False, virtual = False, const = True, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = True, parameters = [] ),
             dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'AInterface' ) ],
                 templatePrefix = "", templateParametersList = None, fullTextNaked = "classB:publicAInterface{intf()constoverride{return0;}}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
-                returnType = "int", static = False, virtual = False, const = True, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = True, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -297,16 +297,16 @@ class TestCParsing( unittest.TestCase ):
         self._simpleTest( "int f() noexcept { return 0; } int g() noexcept;"
                 "class A { public: A() noexcept; ~A() noexcept; void method() noexcept;};", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "f", text = "int f",
-                returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "g", text = "int g",
-                returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "enterClass", name = "A", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classA{public:A()noexcept;~A()noexcept;voidmethod()noexcept;}" ),
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "constructorDefinition", templatePrefix = "", name = "A", text = "A",
-                returnType = None, static = None, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "method", templatePrefix = "", name = "method", text = "method",
-                returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -314,7 +314,7 @@ class TestCParsing( unittest.TestCase ):
         self._simpleTest( 'extern "C" { int a; }\nextern "C" void f();', [
             dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "f", text = "void f",
-                returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ExplicitConversionOperator( self ):
@@ -333,7 +333,7 @@ class TestCParsing( unittest.TestCase ):
 #                fullTextNaked = "classSuperDuper{public:intaFunction(inta){return0;}intc;}" ),
 #            dict( callbackName = "accessSpec", access = "public" ),
 #            dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-#                returnType = "int", static = False, virtual = False, const = False, parameters = [
+#                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [
 #                dict( name = "a", text = "int a" ) ] ),
 #            dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
 #            dict( callbackName = "leaveClass" ),
@@ -351,7 +351,7 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "A", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classA{template<typenameT>intaFunction(Ta){return0;}}" ),
             dict( callbackName = "method", templatePrefix = "template < typename T >", name = "aFunction",
-                text = "aFunction", returnType = "int", static = False, virtual = False, const = False,
+                text = "aFunction", returnRValue = False, returnType = "int", static = False, virtual = False, const = False,
                 parameters = [ dict( name = "a", text = "T a" ) ] ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -361,13 +361,13 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "AInterface", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classAInterface{virtualintf()=0;staticinta;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
-                returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'AInterface' ) ],
                 templatePrefix = "", templateParametersList = None, fullTextNaked = "classB:publicAInterface{intf()overridefinal{return0;}}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
-                returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -387,7 +387,7 @@ class TestCParsing( unittest.TestCase ):
                 templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
                 fullTextNaked = "template<typenameT>classA{TaFunction(Ta){return0;}}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction",
-                text = "aFunction", returnType = "T", static = False, virtual = False, const = False,
+                text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
                 parameters = [ dict( name = "a", text = "T a" ) ] ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -406,9 +406,35 @@ class TestCParsing( unittest.TestCase ):
                 templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
                 fullTextNaked = "template<typenameT>structA{TaFunction(Ta){return0;}}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction",
-                text = "aFunction", returnType = "T", static = False, virtual = False, const = False,
+                text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
                 parameters = [ dict( name = "a", text = "T a" ) ] ),
             dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_Bugfix_FunctionsThatReturnClassesMightNeedToReturnRvalue( self ):
+        self._simpleTest( "#include <memory>\n"
+                "std::unique_ptr< int > func() { \n"
+                "std::unique_ptr< int > res( new int );\n"
+                "return std::move( res );}\n", [
+            dict( callbackName = "functionDefinition", templatePrefix = "", name = "func",
+                text = "std :: unique_ptr < int > func",
+                returnType = "std :: unique_ptr < int >", static = True, virtual = False,
+                returnRValue = True,
+                const = False, parameters = [] ),
+        ] )
+
+    def test_Bugfix_FunctionsThatReturnClassesMightNeedToReturnRvalue_TypedefToUniquePTR( self ):
+        self._simpleTest( "#include <memory>\n"
+                "typedef std::unique_ptr< int > UniqueInt;"
+                "UniqueInt func() { \n"
+                "UniqueInt res( new int );\n"
+                "return std::move( res );}\n", [
+            dict( callbackName = 'typedef', name = 'UniqueInt', text = 'typedef std :: unique_ptr < int > UniqueInt' ),
+            dict( callbackName = "functionDefinition", templatePrefix = "", name = "func",
+                text = "UniqueInt func",
+                returnType = "UniqueInt", static = True, virtual = False,
+                returnRValue = True,
+                const = False, parameters = [] ),
         ] )
 
 

@@ -1,10 +1,11 @@
 #TODO: virtual detection
 class FunctionDecomposition:
-    def __init__( self, name, parameters, text, returnType, static, const, templatePrefix = "" ):
+    def __init__( self, name, parameters, text, returnType, returnRValue, static, const, templatePrefix = "" ):
         self.name = name
         self.parameters = parameters
         self.text = text
         self.returnType = returnType
+        self.returnRValue = returnRValue
         self.static = static
         self.templatePrefix = templatePrefix
         self.const = const

@@ -34,7 +34,7 @@ class IterateAPI:
 
     def process( self, filename, includes = [], defines = [], preIncludes = [] ):
         index = cindex.Index.create()
-        FORCE_CPLUSPLUS = [ "-x", "c++", "-std=gnu++11" ]
+        FORCE_CPLUSPLUS = [ "-x", "c++", "-std=c++11" ]
         preIncludeArgs = [ "-include", gccparity.emulateGCCInClangPreinclude ] + sum( [ [ "-include", p ] for p in preIncludes ], [] )
         includes = includes + gccparity.gccIncludePath()
         args = FORCE_CPLUSPLUS + preIncludeArgs + [ filename ] + [ '-I' + i for i in includes ] + [ '-D' + d for d in defines ]
@@ -82,11 +82,17 @@ class IterateAPI:
                     continue
                 self.__iterateNode( child )
             self.leaveClass()
+        elif node.kind == cindex.CursorKind.CLASS_DECL and not node.is_definition():
+            self.structForwardDeclaration( name = node.spelling )
         elif node.kind == cindex.CursorKind.UNEXPOSED_DECL: #extern "C"
             for child in node.get_children():
                 self.__iterateNode( child )
         elif node.kind == cindex.CursorKind.VAR_DECL:
-            self.variableDeclaration( name = node.spelling, text = self.__nodeText( node, removePrefixKeywords = [ 'static' ] ) )
+            if "static constexpr" in self.__nodeText( node ):
+                self.variableDeclaration( name = node.spelling, text = self.__nodeText( node ) )
+            else:
+                self.variableDeclaration( name = node.spelling, text = self.__nodeText( node, removePrefixKeywords = [ 'static' ] ) )
+
         elif node.kind == cindex.CursorKind.FIELD_DECL:
             self.fieldDeclaration( name = node.spelling, text = self.__nodeText( node ) )
         elif node.kind == cindex.CursorKind.TYPEDEF_DECL:
@@ -104,6 +110,7 @@ class IterateAPI:
                                                         text = text,
                                                         parameters = parameters,
                                                         returnType = returnType,
+                                                        returnRValue = self.__returnRValue( node.result_type ),
                                                         static = True,
                                                         const = False )
             self.functionForwardDeclaration( decomposition = decomposition )
@@ -117,6 +124,7 @@ class IterateAPI:
                                                                 text = text,
                                                                 parameters = parameters,
                                                                 returnType = returnType,
+                                                                returnRValue = self.__returnRValue( node.result_type ),
                                                                 static = True,
                                                                 const = False )
             self.functionDefinition( decomposition = decomposition )
@@ -128,6 +136,7 @@ class IterateAPI:
                                                                 text = node.spelling,
                                                                 parameters = parameters,
                                                                 returnType = None,
+                                                                returnRValue = False,
                                                                 static = None,
                                                                 const = False )
             self.constructorDefinition( decomposition = decomposition )
@@ -146,6 +155,7 @@ class IterateAPI:
                                                                 text = node.spelling,
                                                                 parameters = parameters,
                                                                 returnType = returnType,
+                                                                returnRValue = self.__returnRValue( node.result_type ),
                                                                 static = node.is_static_method(),
                                                                 const = self.__isMethodConst( node ),
                                                                 templatePrefix = templatePrefix )
@@ -356,3 +366,14 @@ class IterateAPI:
             removed = spaceSeperated.pop() + removed
         assert removed == spacelessSuffix, "String '%s' does not end with '%s'" % ( string, suffix )
         return " ".join( spaceSeperated ).strip()
+
+    def __returnRValue( self, resultType ):
+        if resultType.kind == cindex.TypeKind.RECORD:
+            return True
+        if resultType.kind == cindex.TypeKind.UNEXPOSED and \
+                resultType.get_declaration().kind == cindex.CursorKind.CLASS_DECL:
+            return True
+        if resultType.kind in [ cindex.TypeKind.TYPEDEF, cindex.TypeKind.UNEXPOSED ] and \
+                resultType.get_declaration().kind == cindex.CursorKind.TYPEDEF_DECL:
+            return self.__returnRValue( resultType.get_declaration().underlying_typedef_type )
+        return False

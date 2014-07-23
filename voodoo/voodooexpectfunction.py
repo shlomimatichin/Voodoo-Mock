@@ -47,7 +47,10 @@ class VoodooExpectFunction:
         self._code.lineOut( '\tmultiplexer.returnValue(' +
                 'VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );' )
         if not decomposition.returnTypeIsVoid():
-            self._code.lineOut( '\treturn * (%s *) returnValueAsVoid;' % nonReferenceType )
+            if decomposition.returnRValue:
+                self._code.lineOut( '\treturn std::move( * (%s *) returnValueAsVoid );' % nonReferenceType )
+            else:
+                self._code.lineOut( '\treturn * (%s *) returnValueAsVoid;' % nonReferenceType )
 
     def _nonReferenceType( self, decomposition ):
         return decomposition.returnType.rstrip( '& \t' )

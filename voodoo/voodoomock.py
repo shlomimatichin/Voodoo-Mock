@@ -183,7 +183,7 @@ class VoodooMock:
         if self._constructorCount == 0:
             self._code.increaseIndent()
             decomposition = functiondecomposition.FunctionDecomposition( name = self._identifier, parameters = [],
-                            text = self._identifier, returnType = None, static = False, const = False )
+                            text = self._identifier, returnRValue = False, returnType = None, static = False, const = False )
             self.implementConstructor( decomposition )
             self._code.decreaseIndent()
         inherits = ""
