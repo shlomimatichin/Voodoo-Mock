@@ -444,6 +444,33 @@ public:
 		_CallThrowValue< CallOrCopyOf, T >( whatWasCalled, value ) {}
 };
 
+template < typename T >
+class CallReturnRValue : public Call
+{
+public:
+	CallReturnRValue( const char * whatWasCalled , T value ) :
+		Call( whatWasCalled ) ,
+		_value( std::move( value ) )
+	{
+	}
+
+private:
+	void returnValue( const char * typeString , const void * & value )
+	{
+		if ( strcmp( typeString , TemplateTypeString< T >().typeString() ) != 0 ) {
+			ErrorMessage error;
+			error.append( "Expected call to return " );
+			error.append( TemplateTypeString< T >().typeString() );
+			error.append( " but found " );
+			error.append( typeString );
+			throw error;
+		}
+		value = std::move( & _value );
+	}
+
+	T _value;
+};
+
 template < typename Call, typename T >
 class _CallReturnValue : public Call
 {
