@@ -453,6 +453,27 @@ private:
 };
 
 template < typename T >
+class MoveValue : public StrongTyped< T >
+{
+public:
+	MoveValue( T value ):
+		StrongTyped< T >( "MoveValue" ),
+		_value( std::move( value ) )
+	{
+	}
+
+	void compare( T & value ) {}
+
+	void effect( T value )
+	{
+		_value = std::move( value );
+	}
+
+private:
+	T _value;
+};
+
+template < typename T >
 class SaveSimpleValue : public StrongTyped< T >
 {
 public:

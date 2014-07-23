@@ -14,6 +14,7 @@
 #define CallReturnAuto _LineMessageWrapper( __FILE__ , __LINE__ ) << new CallReturnAuto
 #define CallReturnReference _LineMessageWrapper( __FILE__ , __LINE__ ) << new CallReturnReference
 #define CallReturnValue _LineMessageWrapper(  __FILE__ , __LINE__ ) << new CallReturnValue
+#define CallMoveValue _LineMessageWrapper(  __FILE__ , __LINE__ ) << new CallMoveValue
 #define CallReturnVoid _LineMessageWrapper( __FILE__ , __LINE__ ) << new CallReturnVoid
 #define CallReturnCallbackReference _LineMessageWrapper( __FILE__ , __LINE__ ) << new CallReturnCallbackReference
 #define CallThrowReference _LineMessageWrapper( __FILE__ , __LINE__ ) << new CallThrowReference
