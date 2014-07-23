@@ -271,14 +271,40 @@ private:
 	char __voodooInstanceName[ VOODOO_EXPECT_MAX_INSTANCE_NAME + sizeof( '\0' ) ];
 };
 
-void voodooVoidCall( const char * functionName )
+void multiplexerCheckParameters( VoodooCommon::Expect::Multiplexer & multiplexer, unsigned parameterIndex )
+{
+	multiplexer.check( parameterIndex, "VOODOO_NO_MORE_PARAMETERS", 0 );
+}
+
+template < typename P, typename... Params >
+void multiplexerCheckParameters( VoodooCommon::Expect::Multiplexer & multiplexer, unsigned parameterIndex, P & p1, Params&... params )
+{
+	multiplexer.check( parameterIndex, VoodooCommon::PointerTypeString( & p1 ).typeString(), & p1 );
+	multiplexerCheckParameters( multiplexer, parameterIndex + 1, params... );
+}
+
+void multiplexerEffectParameters( VoodooCommon::Expect::Multiplexer & multiplexer, unsigned parameterIndex )
+{
+	// no-op
+}
+
+template < typename P, typename... Params >
+void multiplexerEffectParameters( VoodooCommon::Expect::Multiplexer & multiplexer, unsigned parameterIndex, P &	p1, Params&... params )
+{
+	multiplexer.effect( parameterIndex, VoodooCommon::PointerTypeString( & p1 ).typeString(), & p1 );
+	multiplexerEffectParameters( multiplexer, parameterIndex + 1, params... );
+}
+
+template < typename... Params >
+void voodooVoidCall( const char * functionName, Params&... params )
 {
 	try {
 		__VoodooGrowingString growingString;
 		growingString.append( "Call to " );
 		growingString.append( functionName );
 		VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-		multiplexer.check( 0, "VOODOO_NO_MORE_PARAMETERS", 0 );
+		multiplexerCheckParameters( multiplexer, 0, params... );
+		multiplexerEffectParameters( multiplexer, 0, params... );
 		const void * returnValueAsVoid = 0;
 		void * returnValueUnused = 0;
 		multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
