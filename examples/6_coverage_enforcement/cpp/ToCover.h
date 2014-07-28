@@ -2,6 +2,12 @@
 #define __TO_COVER_H__
 
 #include "SemiCoveredExemptFile.h"
+#include <stdexcept>
+
+void throwExceptionFunction()
+{
+	throw std::runtime_error( "Some error" );
+}
 
 template < typename T >
 void aFunction( T input )
@@ -14,6 +20,18 @@ void aFunction( T input )
 	if ( input == 10 )
 		input -= 2; // this line is not covered therefore its a coverage error
 	semiCoveredFunction( 10 );
+	try {
+		throwExceptionFunction();
+	}
+	catch ( std::runtime_error ) {
+		input += 4;
+	}
+	catch ( std::exception ) { // LINE_EXEMPT_FROM_CODE_COVERAGE
+		printf("hello\n"); // LINE_EXEMPT_FROM_CODE_COVERAGE
+	}
+	catch ( ... ) { // this line is not covered therefore its a coverage error
+		printf("hello again\n"); // this line is not covered therefore its a coverage error
+	}
 }
 
 void anotherFunction()

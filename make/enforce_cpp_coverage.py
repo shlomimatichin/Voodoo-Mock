@@ -6,9 +6,10 @@ import glob
 class EnforceCPPCoverage:
     _SOURCE_FILENAME = re.compile( "0:Source:(\S+)" )
     _NON_COVERED_PREFIX = '    #####'
+    _NON_COVERED_EXCEPTIONAL_PREFIX = '    ====='
     _LINE_EXEMPT_FROM_CODE_COVERAGE = 'LINE_EXEMPT_FROM_CODE_COVERAGE'
     _FILE_EXEMPT_FROM_CODE_COVERAGE = 'FILE_EXEMPT_FROM_CODE_COVERAGE'
-    _NON_COVERED_REGEX = re.compile( r"^    #####:\s*(\d+):" )
+    _NON_COVERED_REGEX = re.compile( r"^    [=#]{5}:\s*(\d+):" )
     _COVERED_REGEX = re.compile( r"^\s*\-?\d+:\s*(\d+):" )
     _NON_CODE_REGEX = re.compile( r"^\s*-:\s*(\d+):" )
 
@@ -67,7 +68,8 @@ class EnforceCPPCoverage:
                 self._filesExemptFromCodeCoverage.add( sourceFilename )
 
     def _readGCOVLine( self, line, sourceFilename ):
-        if line.startswith( self._NON_COVERED_PREFIX ):
+        if line.startswith( self._NON_COVERED_PREFIX ) or \
+           line.startswith( self._NON_COVERED_EXCEPTIONAL_PREFIX ):
             lineNumber = int( self._NON_COVERED_REGEX.match( line ).group( 1 ) )
             if self._LINE_EXEMPT_FROM_CODE_COVERAGE in line:
                 self._linesExemptFromCodeCoverage.add( ( sourceFilename, lineNumber ) )
