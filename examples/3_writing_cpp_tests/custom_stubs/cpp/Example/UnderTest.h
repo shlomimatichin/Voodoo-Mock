@@ -24,6 +24,10 @@ public:
 		(void) result2;
 
 		globalFunction( second );
+		int result3 = globalFunctionReturningInt();
+		(void) result3;
+		std::string result4 = globalFunctionMoveReturn();
+		(void) result4;
 	}
 
 private:

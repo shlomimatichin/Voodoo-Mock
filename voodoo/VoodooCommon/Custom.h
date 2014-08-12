@@ -234,7 +234,7 @@ void voodooVoidCall( const char * functionName, Params&... params )
 }
 
 template < typename ReturnValue, typename... Params >
-void voodooCall( const char * functionName, Params&... params )
+ReturnValue voodooCall( const char * functionName, Params&... params )
 {
 	try {
 		__VoodooGrowingString growingString;
@@ -244,7 +244,7 @@ void voodooCall( const char * functionName, Params&... params )
 		multiplexerCheckParameters( multiplexer, 0, params... );
 		multiplexerEffectParameters( multiplexer, 0, params... );
 		const void * returnValueAsVoid = 0;
-		void * returnValueUnused = 0;
+		ReturnValue * returnValueUnused = 0;
 		multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
 		return * (ReturnValue *) returnValueAsVoid;
 	} catch ( VoodooCommon::ErrorMessage & e ) {
@@ -261,7 +261,7 @@ void voodooCall( const char * functionName, Params&... params )
 }
 
 template < typename ReturnValue, typename... Params >
-void voodooMoveCall( const char * functionName, Params&... params )
+ReturnValue voodooMoveCall( const char * functionName, Params&... params )
 {
 	try {
 		__VoodooGrowingString growingString;
@@ -271,7 +271,7 @@ void voodooMoveCall( const char * functionName, Params&... params )
 		multiplexerCheckParameters( multiplexer, 0, params... );
 		multiplexerEffectParameters( multiplexer, 0, params... );
 		const void * returnValueAsVoid = 0;
-		void * returnValueUnused = 0;
+		ReturnValue * returnValueUnused = 0;
 		multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
 		return std::move( * (ReturnValue *) returnValueAsVoid );
 	} catch ( VoodooCommon::ErrorMessage & e ) {

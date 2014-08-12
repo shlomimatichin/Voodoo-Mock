@@ -44,6 +44,15 @@ void globalFunction( const char * str )
 {
 	Custom::voodooVoidCall( "Example::globalFunction", str );
 }
+int globalFunctionReturningInt()
+{
+	return Custom::voodooCall< int >( "Example::globalFunctionReturningInt" );
+}
+std::string globalFunctionMoveReturn()
+{
+	return std::move( Custom::voodooMoveCall< std::string >( "Example::globalFunctionMoveReturn" ) );
+}
+
 }
 
 #include "Example/UnderTest.h"
@@ -69,6 +78,8 @@ public:
 				std::unique_ptr< int >( new int ) ) <<
 			new CallReturnVoid( "Example::globalFunction" ) <<
 				new StringEquals( "yada" ) <<
+			new CallReturnValue< int >( "Example::globalFunctionReturningInt", 19 ) <<
+			new CallMoveValue< std::string >( "Example::globalFunctionMoveReturn", std::string( "yep" ) ) <<
 			new Destruction( "Fake MockMe" );
 		tested.underTest();
 		scenario.assertFinished();
