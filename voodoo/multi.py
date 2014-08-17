@@ -26,7 +26,7 @@ assert len( args.inputPath ) > 0, "please specify at least one --inputPath argum
 for inputPath in args.inputPath:
     assert os.path.isdir( inputPath ), "--inputPath must be an existing directory"
 try:
-    os.mkdirs( args.outputPath )
+    os.makedirs( args.outputPath )
 except:
     pass
 assert os.path.isdir( args.outputPath ), "--outputPath must be a directory"
