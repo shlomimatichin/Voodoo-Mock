@@ -5,9 +5,10 @@ class VoodooExpectFunction:
         self._code = code
 
     def function( self, decomposition ):
-        self._code.lineOut( "%s%s%s %s( %s )" % (
+        self._code.lineOut( "%s%s%s%s %s( %s )" % (
                     decomposition.templatePrefix,
                     decomposition.stringStaticInlineIfStatic(),
+                    decomposition.stringVirtualIfVirtual(),
                     decomposition.returnType,
                     decomposition.name,
                     decomposition.parametersFullSpec() ) )

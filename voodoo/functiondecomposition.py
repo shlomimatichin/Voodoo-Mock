@@ -1,6 +1,6 @@
-#TODO: virtual detection
 class FunctionDecomposition:
-    def __init__( self, name, parameters, text, returnType, returnRValue, static, const, templatePrefix = "" ):
+    def __init__( self, name, parameters, text, returnType, returnRValue, static, const, templatePrefix = "",
+            virtual = False ):
         self.name = name
         self.parameters = parameters
         self.text = text
@@ -9,7 +9,7 @@ class FunctionDecomposition:
         self.static = static
         self.templatePrefix = templatePrefix
         self.const = const
-        self.virtual = False
+        self.virtual = virtual
 
     def parametersFullSpec( self ):
         return ", ".join( [ p[ 'text' ] for p in self.parameters ] )
@@ -28,3 +28,5 @@ class FunctionDecomposition:
 
     def stringStaticInlineIfStatic( self ):
         return "static inline " if self.static else ""
+    def stringVirtualIfVirtual( self ):
+        return "virtual" if self.virtual else ""

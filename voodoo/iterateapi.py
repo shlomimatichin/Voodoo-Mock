@@ -92,7 +92,6 @@ class IterateAPI:
                 self.variableDeclaration( name = node.spelling, text = self.__nodeText( node ) )
             else:
                 self.variableDeclaration( name = node.spelling, text = self.__nodeText( node, removePrefixKeywords = [ 'static' ] ) )
-
         elif node.kind == cindex.CursorKind.FIELD_DECL:
             self.fieldDeclaration( name = node.spelling, text = self.__nodeText( node ) )
         elif node.kind == cindex.CursorKind.TYPEDEF_DECL:
@@ -158,7 +157,8 @@ class IterateAPI:
                                                                 returnRValue = self.__returnRValue( node.result_type ),
                                                                 static = node.is_static_method(),
                                                                 const = self.__isMethodConst( node ),
-                                                                templatePrefix = templatePrefix )
+                                                                templatePrefix = templatePrefix,
+                                                                virtual = self.__methodIsVirtual( node ) )
             self.method( decomposition = decomposition )
         elif node.kind == cindex.CursorKind.CONVERSION_FUNCTION:
             assert node.spelling.startswith( "operator" )
@@ -216,7 +216,6 @@ class IterateAPI:
     def __templateParametersList( self, node ):
         return [ child.spelling for child in node.get_children()
                 if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ] ]
-
     def __parseParameter( self, node, lastParameter ):
         terminator = ')' if lastParameter else ','
         return dict( name = node.spelling, text = self.__nodeText( node, terminatorCharacter = terminator ) )
@@ -305,7 +304,11 @@ class IterateAPI:
         tokens = list( pointee.get_declaration().get_tokens() )
         return tokens[ -1 ].spelling == ';' and tokens[ -2 ].spelling == '}'
 
-    def __nodeText( self,
+    def __nodeText( self, * args, ** kwargs ):
+        tokens = self.__nodeTextTokens( * args, ** kwargs )
+        return " ".join( [ token.spelling for token in tokens ] )
+
+    def __nodeTextTokens( self,
                     node,
                     terminatorCharacter = ';',
                     removeLastParenthesis = False,
@@ -342,7 +345,7 @@ class IterateAPI:
             while len( [ i for i in xrange( len( tokens ) ) if tokens[ i ].spelling == '}' ] ) > 0 and \
                     tokens[ -1 ].spelling != '}':
                 tokens.pop()
-        return " ".join( [ token.spelling for token in tokens ] )
+        return tokens
 
     def __fullNamespaceType( self, node ):
         text = node.spelling
@@ -366,7 +369,6 @@ class IterateAPI:
             removed = spaceSeperated.pop() + removed
         assert removed == spacelessSuffix, "String '%s' does not end with '%s'" % ( string, suffix )
         return " ".join( spaceSeperated ).strip()
-
     def __returnRValue( self, resultType ):
         if resultType.kind == cindex.TypeKind.RECORD:
             return True
@@ -376,4 +378,12 @@ class IterateAPI:
         if resultType.kind in [ cindex.TypeKind.TYPEDEF, cindex.TypeKind.UNEXPOSED ] and \
                 resultType.get_declaration().kind == cindex.CursorKind.TYPEDEF_DECL:
             return self.__returnRValue( resultType.get_declaration().underlying_typedef_type )
+        return False
+
+    def __methodIsVirtual( self, node ):
+        functionPrototype = self.__nodeTextTokens(node, removeLastParenthesis=True, removeBraces=True,
+                removeEverythingAfterLastClosingBrace=True)
+        for token in functionPrototype:
+            if token.spelling == "virtual":
+                return True
         return False

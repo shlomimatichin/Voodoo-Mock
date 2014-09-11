@@ -265,7 +265,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classSuperDuper{virtualvoidaFunction()=0;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = True, const = False, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -274,7 +274,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classSuperDuper{virtualvoidaFunction()const=0;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
-                returnRValue = False, returnType = "void", static = False, virtual = False, const = True, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = True, const = True, parameters = [] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -283,7 +283,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "AInterface", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classAInterface{virtualintf()const=0;staticinta;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
-                returnRValue = False, returnType = "int", static = False, virtual = False, const = True, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = True, const = True, parameters = [] ),
             dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'AInterface' ) ],
@@ -361,7 +361,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "AInterface", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classAInterface{virtualintf()=0;staticinta;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
-                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = True, const = False, parameters = [] ),
             dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'AInterface' ) ],
@@ -435,6 +435,18 @@ class TestCPPParsing( unittest.TestCase ):
                 returnType = "UniqueInt", static = True, virtual = False,
                 returnRValue = True,
                 const = False, parameters = [] ),
+        ] )
+
+    def test_Bugfix_VirtualWithCode( self ):
+        self._simpleTest( "class SuperDuper { virtual int aFunction() { return 10; } };", [
+            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classSuperDuper{virtualintaFunction(){return10;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction",
+                returnType = "int", static = False, virtual = True,
+                returnRValue = False,
+                const = False, parameters = [] ),
+            dict( callbackName = "leaveClass" ),
         ] )
 
 
