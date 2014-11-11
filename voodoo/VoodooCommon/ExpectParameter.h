@@ -456,21 +456,21 @@ template < typename T >
 class MoveValue : public StrongTyped< T >
 {
 public:
-	MoveValue( T value ):
+	MoveValue( T * value ):
 		StrongTyped< T >( "MoveValue" ),
-		_value( std::move( value ) )
+		_value( value )
 	{
 	}
 
 	void compare( T & value ) {}
 
-	void effect( T value )
+	void effect( T & value )
 	{
-		_value = std::move( value );
+		( * _value ) = std::move( value );
 	}
 
 private:
-	T _value;
+	T * _value;
 };
 
 template < typename T >

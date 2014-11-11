@@ -92,6 +92,22 @@ void testReferenceTo()
 	scenario.assertFinished();
 }
 
+void testMoveValue()
+{
+    std::unique_ptr< struct Data > dataPtr( new Data( 1, 2 ) );
+	struct Data * savedDataPtr = dataPtr.get();
+    std::unique_ptr< struct Data > outDataPtr;
+	Scenario scenario;
+	scenario <<
+		new CallReturnVoid( "doMoveData" ) <<
+			new MoveValue< std::unique_ptr< struct Data > >( & outDataPtr );
+	moveData( std::move( dataPtr ) );
+	scenario.assertFinished();
+    if ( outDataPtr.get != savedDataPtr )
+		throw TestFailed();
+	delete result;
+}
+
 void testSaveValue()
 {
 	struct Data input = { 1, 2 };
@@ -188,7 +204,7 @@ void testAssignRefernce()
 void testSimplePredicate()
 {
 	class MarkString { public:
-		bool operator () ( const char * string ) 
+		bool operator () ( const char * string )
 			{ return strcmp( string, "MARK" ) == 0; }
 	};
 
@@ -205,7 +221,7 @@ void testPredicateValue()
 	class Strcmp { public:
 		Strcmp( const char * string ) : _string( string ) {}
 		const char * _string;
-		bool operator () ( const char * string ) 
+		bool operator () ( const char * string )
 			{ return strcmp( string, _string ) == 0; }
 	};
 
@@ -222,7 +238,7 @@ void testPredicateReference()
 	class Strcmp { public:
 		Strcmp( const char * string ) : _string( string ) {}
 		const char * _string;
-		bool operator () ( const char * string ) 
+		bool operator () ( const char * string )
 			{ return strcmp( string, _string ) == 0; }
 	private:
 		Strcmp( const Strcmp & ) {}
