@@ -2,6 +2,7 @@
 #define __TESTED_H__
 
 #include "Mocked.h"
+#include <memory>
 
 void setDefaultInterval()
 {
@@ -31,6 +32,11 @@ void giveDataSwitched( struct Data data )
 	data.a = data.b;
 	data.b = temp;
 	giveData( data );
+}
+
+void moveData( std::unique_ptr< struct Data > data )
+{
+	doMoveData( std::move( data ) );
 }
 
 void setCallbackByReference()
