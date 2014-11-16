@@ -106,7 +106,7 @@ private:
 			error.append( value.voodooInstanceName() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -144,7 +144,7 @@ private:
 			error.append( value.voodooInstanceName() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -171,7 +171,7 @@ private:
 			error.append( VOODOO_TO_STRING( value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -205,7 +205,7 @@ private:
 			error.append( VOODOO_TO_STRING( * value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -239,7 +239,7 @@ private:
 			error.append( VOODOO_TO_STRING( * value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -266,7 +266,7 @@ private:
 			error.append( VOODOO_TO_STRING( value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -293,7 +293,7 @@ private:
 			error.append( DataDumpString( value ).dataString() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -324,7 +324,7 @@ private:
 			error.append( TemplateTypeString<T>().typeString() );
 			error.append( "')" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -349,7 +349,7 @@ public:
 			error.append( VOODOO_TO_STRING( value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -453,24 +453,45 @@ private:
 };
 
 template < typename T >
-class MoveValue : public StrongTyped< T >
+class MoveValueConstructor : public StrongTyped< T >
 {
 public:
-	MoveValue( T value ):
-		StrongTyped< T >( "MoveValue" ),
-		_value( std::move( value ) )
+	MoveValueConstructor( T * & value ):
+		StrongTyped< T >( "MoveValueConstructor" ),
+		_value( value )
+	{
+	}
+
+private:
+	T * & _value;
+
+	void compare( T & value ) {}
+
+	void effect( T & value )
+	{
+		_value = new T( std::move( value ) );
+	}
+};
+
+template < typename T >
+class MoveValueAssignment : public StrongTyped< T >
+{
+public:
+	MoveValueAssignment( T * value ):
+		StrongTyped< T >( "MoveValueAssignment" ),
+		_value( value )
 	{
 	}
 
 	void compare( T & value ) {}
 
-	void effect( T value )
+	void effect( T & value )
 	{
-		_value = std::move( value );
+		( * _value ) = std::move( value );
 	}
 
 private:
-	T _value;
+	T * _value;
 };
 
 template < typename T >
@@ -604,7 +625,7 @@ private:
 			error.append( value );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -639,7 +660,7 @@ private:
 			error.append( value );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -666,7 +687,7 @@ private:
 			error.append( VOODOO_TO_STRING( value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -702,7 +723,7 @@ private:
 			error.append( DataDumpString( value, _size ).dataString() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
