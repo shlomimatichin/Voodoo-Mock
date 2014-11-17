@@ -25,8 +25,7 @@ struct MoveableCtorData
 struct MoveableData
 {
 	MoveableData( unsigned aa ) : a( aa ) {}
-	MoveableData( const MoveableData & o ) : a( o.a ) {}
-	MoveableData( MoveableCtorData && o ) : a( std::move( o.a ) ) {}
+	MoveableData( MoveableData && o ) : a( std::move( o.a ) ) {}
 
 	MoveableData & operator=( MoveableData && o ) { a = std::move( o.a ); return *this; }
 
