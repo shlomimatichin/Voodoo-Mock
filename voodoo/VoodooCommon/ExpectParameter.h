@@ -3,6 +3,7 @@
 
 #include <VoodooCommon/Utils.h>
 #include <type_traits>
+#include <functional>
 
 #ifndef VOODOO_EXPECT_MAX_CLASS_NAME
 #define VOODOO_EXPECT_MAX_CLASS_NAME 256
@@ -106,7 +107,7 @@ private:
 			error.append( value.voodooInstanceName() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -144,7 +145,7 @@ private:
 			error.append( value.voodooInstanceName() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -171,7 +172,7 @@ private:
 			error.append( VOODOO_TO_STRING( value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -205,7 +206,7 @@ private:
 			error.append( VOODOO_TO_STRING( * value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -239,7 +240,7 @@ private:
 			error.append( VOODOO_TO_STRING( * value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -266,7 +267,7 @@ private:
 			error.append( VOODOO_TO_STRING( value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -293,7 +294,7 @@ private:
 			error.append( DataDumpString( value ).dataString() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -324,7 +325,7 @@ private:
 			error.append( TemplateTypeString<T>().typeString() );
 			error.append( "')" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -346,10 +347,10 @@ public:
 			error.append( "Expected predicate on type'" );
 			error.append( TemplateTypeString<T>().typeString() );
 			error.append( "' to return true on found value '" );
-			error.append( VOODOO_TO_STRING( value ) );
+			error.append( VOODOO_TO_STRING( std::ref( value ) ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -604,7 +605,7 @@ private:
 			error.append( value );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -639,7 +640,7 @@ private:
 			error.append( value );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -666,7 +667,7 @@ private:
 			error.append( VOODOO_TO_STRING( value ) );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
@@ -702,7 +703,7 @@ private:
 			error.append( DataDumpString( value, _size ).dataString() );
 			error.append( "'" );
 			throw error;
-		}	
+		}
 	}
 };
 
