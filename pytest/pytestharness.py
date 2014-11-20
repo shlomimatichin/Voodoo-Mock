@@ -177,8 +177,12 @@ class ParallelRun:
                 self._lock.release()
 
 result = ParallelRun( needToRunSuites ).go()
+if os.path.dirname( args.cacheFile ) != '' and not os.path.isdir( os.path.dirname( args.cacheFile ) ):
+    os.makedirs( os.path.dirname( args.cacheFile ) )
 with open( args.cacheFile, "wb" ) as f:
     pickle.dump( lastRun, f )
+if os.path.dirname( args.reportFile ) != '' and not os.path.isdir( os.path.dirname( args.reportFile ) ):
+    os.makedirs( os.path.dirname( args.reportFile ) )
 with open( args.reportFile, "w" ) as f:
     json.dump( report, f, indent = 4 )
 exit( result )
