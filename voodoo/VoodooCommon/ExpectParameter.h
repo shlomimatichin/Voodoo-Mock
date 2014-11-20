@@ -454,24 +454,45 @@ private:
 };
 
 template < typename T >
-class MoveValue : public StrongTyped< T >
+class MoveValueConstructor : public StrongTyped< T >
 {
 public:
-	MoveValue( T value ):
-		StrongTyped< T >( "MoveValue" ),
-		_value( std::move( value ) )
+	MoveValueConstructor( T * & value ):
+		StrongTyped< T >( "MoveValueConstructor" ),
+		_value( value )
+	{
+	}
+
+private:
+	T * & _value;
+
+	void compare( T & value ) {}
+
+	void effect( T & value )
+	{
+		_value = new T( std::move( value ) );
+	}
+};
+
+template < typename T >
+class MoveValueAssignment : public StrongTyped< T >
+{
+public:
+	MoveValueAssignment( T * value ):
+		StrongTyped< T >( "MoveValueAssignment" ),
+		_value( value )
 	{
 	}
 
 	void compare( T & value ) {}
 
-	void effect( T value )
+	void effect( T & value )
 	{
-		_value = std::move( value );
+		( * _value ) = std::move( value );
 	}
 
 private:
-	T _value;
+	T * _value;
 };
 
 template < typename T >
