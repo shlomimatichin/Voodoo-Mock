@@ -46,7 +46,9 @@ public:
 	}
 
 protected:
-	Klass( const char * className )
+	Klass( const char * className ) :
+        __voodooClassName(),
+        __voodooInstanceName()
 	{
 		strncpy( __voodooClassName, className, VOODOO_EXPECT_MAX_INSTANCE_NAME );
 	}
