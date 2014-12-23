@@ -65,6 +65,20 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveNamespace" ),
         ] )
 
+    def test_namespaceAlias( self ):
+	    self._simpleTest( "namespace A { namespace B { int b; } namespace C { int c; } int a; } namespace D = A::B;", [
+            dict( callbackName = "enterNamespace", name = "A" ),
+            dict( callbackName = "enterNamespace", name = "B" ),
+            dict( callbackName = "variableDeclaration", name = "b", text = "int b" ),
+            dict( callbackName = "leaveNamespace" ),
+            dict( callbackName = "enterNamespace", name = "C" ),
+            dict( callbackName = "variableDeclaration", name = "c", text = "int c" ),
+            dict( callbackName = "leaveNamespace" ),
+            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "leaveNamespace" ),
+	    dict( callbackName = "using", text = "namespace D = A :: B" ),
+        ] )
+
     def test_constructor( self ):
         self._simpleTest( "class SuperDuper { public: \nSuperDuper( int a, const char * b ) {}\n int c; };", [
             dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,

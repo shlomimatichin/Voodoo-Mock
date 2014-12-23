@@ -180,6 +180,9 @@ class IterateAPI:
         elif node.kind == cindex.CursorKind.USING_DECLARATION:
             text = self.__nodeText( node )
             self.using( text = text )
+        elif node.kind == cindex.CursorKind.NAMESPACE_ALIAS:
+            text = self.__nodeText( node )
+            self.using( text = text )
         elif node.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
             pass
         elif node.kind == cindex.CursorKind.UNION_DECL:
