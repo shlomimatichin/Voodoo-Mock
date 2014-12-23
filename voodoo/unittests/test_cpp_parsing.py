@@ -449,6 +449,11 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
+    def test_templateFunction( self ):
+        self._simpleTest( "template< typename T > int func(); ", [
+            dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "template < typename T > int func",
+                returnRValue = False, returnType = "template < typename T > int", static = True, virtual = False, const = False, parameters = [] ),
+        ] )
 
 if __name__ == '__main__':
     unittest.main()

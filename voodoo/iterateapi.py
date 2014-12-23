@@ -113,7 +113,8 @@ class IterateAPI:
                                                         static = True,
                                                         const = False )
             self.functionForwardDeclaration( decomposition = decomposition )
-        elif node.kind == cindex.CursorKind.FUNCTION_DECL and node.is_definition():
+        elif ( node.kind == cindex.CursorKind.FUNCTION_DECL and node.is_definition() or
+               node.kind == cindex.CursorKind.FUNCTION_TEMPLATE and not self.__is_member( node ) ):
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
             text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'noexcept' ] )
@@ -387,3 +388,8 @@ class IterateAPI:
             if token.spelling == "virtual":
                 return True
         return False
+
+    def __is_member( self, node ):
+        return node.semantic_parent.kind in [ cindex.CursorKind.STRUCT_DECL,
+                                              cindex.CursorKind.CLASS_DECL,
+                                              cindex.CursorKind.CLASS_TEMPLATE ]
