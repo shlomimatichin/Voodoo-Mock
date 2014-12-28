@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <VoodooCommon/Common.h>
+#ifdef VOODOO_HAS_BOOST
+#include <boost/smart_ptr.hpp>
+#endif
+#include <memory>
+#include <type_traits>
 
 #ifndef VOODOO_MAX_TEMPLATE_TYPE
 #define VOODOO_MAX_TEMPLATE_TYPE 256
@@ -171,6 +176,35 @@ private:
 		}
 	}
 };
+
+template < typename T >
+struct isReferenceType
+{
+    static const constexpr bool value = std::is_pointer< T >::value;
+};
+
+#define SPECIALIZE_IS_REFERENCE_TYPE_FOR_SMART_PTR( _type ) template < typename T > struct isReferenceType< _type< T > > : std::true_type \
+{ \
+    static const constexpr bool value = true; \
+}
+SPECIALIZE_IS_REFERENCE_TYPE_FOR_SMART_PTR( std::unique_ptr );
+SPECIALIZE_IS_REFERENCE_TYPE_FOR_SMART_PTR( std::shared_ptr );
+#ifdef VOODOO_HAS_BOOST
+SPECIALIZE_IS_REFERENCE_TYPE_FOR_SMART_PTR( boost::shared_ptr );
+SPECIALIZE_IS_REFERENCE_TYPE_FOR_SMART_PTR( boost::weak_ptr );
+#endif
+
+template < typename T >
+auto dereference( T & t ) -> decltype( *t ) &
+{
+  return * t;
+}
+
+template < typename T >
+auto dereference( T & t ) -> typename std::enable_if< !isReferenceType< T >::value, T >::type &
+{
+  return t;
+}
 
 } // namespace VoodooCommon
 
