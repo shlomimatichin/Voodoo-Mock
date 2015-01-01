@@ -14,6 +14,21 @@ void setHighInterval()
 	setInterval( 10 );
 }
 
+void doSomething( AMockedStruct & s)
+{
+	operateOnStruct( s );
+}
+
+void doSomethingOnUniquePtr( std::unique_ptr< AMockedStruct > s)
+{
+	operateOnStructUniquePtr( std::move( s ) );
+}
+
+void doSomethingOnPtr( AMockedStruct * s)
+{
+	operateOnStructPtr( s );
+}
+
 void doubleClear( Data & data )
 {
 	clear( data );

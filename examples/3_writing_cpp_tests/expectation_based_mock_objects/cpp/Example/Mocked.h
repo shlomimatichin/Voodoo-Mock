@@ -4,6 +4,11 @@
 #include "Data.h"
 #include <memory>
 
+struct AMockedStruct {};
+
+void operateOnStruct( AMockedStruct & s );
+void operateOnStructPtr( AMockedStruct * s );
+void operateOnStructUniquePtr( std::unique_ptr< AMockedStruct > s );
 void clear( Data & data );
 void setInterval( unsigned interval );
 void logMessage( const char * message );

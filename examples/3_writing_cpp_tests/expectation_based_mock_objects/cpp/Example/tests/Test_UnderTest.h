@@ -19,6 +19,42 @@ public:
 	{
 	}
 
+	void test_Named()
+	{
+		FakeND_AMockedStruct fake( "fakeStruct" );
+
+		Scenario scenario;
+		scenario <<
+			new CallReturnVoid( "operateOnStruct" ) <<
+				new Named< AMockedStruct >( "fakeStruct" );
+		doSomething( fake );
+		scenario.assertFinished();
+	}
+
+	void test_NamedOfPtr()
+	{
+		FakeND_AMockedStruct fake( "fakeStruct" );
+
+		Scenario scenario;
+		scenario <<
+			new CallReturnVoid( "operateOnStructPtr" ) <<
+				new Named< AMockedStruct * >( "fakeStruct" );
+		doSomethingOnPtr( &fake );
+		scenario.assertFinished();
+	}
+
+	void test_NamedOfUniquePtr()
+	{
+		std::unique_ptr< FakeND_AMockedStruct> fake( new FakeND_AMockedStruct( "fakeStruct" ) );
+
+		Scenario scenario;
+		scenario <<
+			new CallReturnVoid( "operateOnStructUniquePtr" ) <<
+				new Named< std::unique_ptr< AMockedStruct > >( "fakeStruct" );
+		doSomethingOnUniquePtr( std::move( fake ) );
+		scenario.assertFinished();
+	}
+
 	void test_Ignore()
 	{
 		Scenario scenario;

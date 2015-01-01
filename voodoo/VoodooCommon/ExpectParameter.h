@@ -99,12 +99,12 @@ private:
 
 	void compare( T & value )
 	{
-		if ( strcmp( value.voodooInstanceName() , _expectedName ) != 0 ) {
+		if ( strcmp( dereference( value ).voodooInstanceName() , _expectedName ) != 0 ) {
 			ErrorMessage error;
 			error.append( "Expected instance '" );
 			error.append( _expectedName );
 			error.append( "' found '" );
-			error.append( value.voodooInstanceName() );
+			error.append( dereference( value ).voodooInstanceName() );
 			error.append( "'" );
 			throw error;
 		}
