@@ -10,15 +10,15 @@ namespace CxxTest
 	private:
         void enterWorld( const WorldDescription & desc )
 		{
-			* outputStream() << "\nCOUNT " << desc.numTotalTests() << "\n";
+			* outputStream() << "\nCOUNT " << desc.numTotalTests() << endl;
 		}
         void enterSuite( const SuiteDescription & desc )
 		{
-			* outputStream() << "\nSUITE '" << desc.suiteName() << "'\n";
+			* outputStream() << "\nSUITE '" << desc.suiteName() << "'" << endl;
 		}
         void enterTest( const TestDescription & desc )
 		{
-			* outputStream() << "\nTEST '" << desc.testName() << "'\n";
+			* outputStream() << "\nTEST '" << desc.testName() << "'" << endl;
 		}
         void leaveWorld( const WorldDescription &desc ) {}
         void leaveTest( const TestDescription & ) {}
