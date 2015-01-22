@@ -90,7 +90,7 @@ static inline void printTrace()
     name_buf[readlink("/proc/self/exe", name_buf, 511)]=0;
     char output_name[128];
     strcpy(output_name, "/tmp/stacktrace.XXXXXX");
-    mktemp(output_name);
+    mkstemp(output_name);
     int child_pid = fork();
     if (!child_pid) {           
         int output = open( output_name, O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR );

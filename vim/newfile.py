@@ -115,6 +115,8 @@ def newHFile( filename ):
         return result
 
     assert filename.endswith( ".h" )
+    if filename.startswith(os.getcwd()):
+        filename = filename[len(os.getcwd()) + len(os.path.sep): ]
     filename = os.path.splitext( filename )[ 0 ]
     parts = filename.split( os.path.sep )
     assert parts[ 0 ] == "cpp"
