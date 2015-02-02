@@ -61,8 +61,8 @@ protected:
 			growingString.append( "Construction of " );
 			growingString.append( __voodooClassName );
 			VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-			multiplexerCheckParameters( multiplexer, 0, params... );
-			multiplexerEffectParameters( multiplexer, 0, params... );
+			multiplexer.checkParameterPack( 0, params... );
+			multiplexer.effectParameterPack( 0, params... );
 			voodooSetInstanceName( "" );
 			const void * instanceNameAsVoid;
 			multiplexer.returnValue( "const char *", instanceNameAsVoid );
@@ -122,8 +122,8 @@ protected:
 			growingString.append( "::" );
 			growingString.append( methodName );
 			VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-			multiplexerCheckParameters( multiplexer, 0, params... );
-			multiplexerEffectParameters( multiplexer, 0, params... );
+			multiplexer.checkParameterPack( 0, params... );
+			multiplexer.effectParameterPack( 0, params... );
 			const void * returnValueAsVoid = 0;
 			void * returnValueUnused = 0;
 			multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
@@ -152,8 +152,8 @@ protected:
 			growingString.append( "::" );
 			growingString.append( methodName );
 			VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-			multiplexerCheckParameters( multiplexer, 0, params... );
-			multiplexerEffectParameters( multiplexer, 0, params... );
+			multiplexer.checkParameterPack( 0, params... );
+			multiplexer.effectParameterPack( 0, params... );
 			const void * returnValueAsVoid = 0;
 			ReturnValue * returnValueUnused = 0;
 			multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
@@ -183,8 +183,8 @@ protected:
 			growingString.append( "::" );
 			growingString.append( methodName );
 			VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-			multiplexerCheckParameters( multiplexer, 0, params... );
-			multiplexerEffectParameters( multiplexer, 0, params... );
+			multiplexer.checkParameterPack( 0, params... );
+			multiplexer.effectParameterPack( 0, params... );
 			const void * returnValueAsVoid = 0;
 			ReturnValue * returnValueUnused = 0;
 			multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
@@ -217,8 +217,8 @@ void voodooVoidCall( const char * functionName, Params&... params )
 		growingString.append( "Call to " );
 		growingString.append( functionName );
 		VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-		multiplexerCheckParameters( multiplexer, 0, params... );
-		multiplexerEffectParameters( multiplexer, 0, params... );
+		multiplexer.checkParameterPack( 0, params... );
+		multiplexer.effectParameterPack( 0, params... );
 		const void * returnValueAsVoid = 0;
 		void * returnValueUnused = 0;
 		multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
@@ -243,8 +243,8 @@ ReturnValue voodooCall( const char * functionName, Params&... params )
 		growingString.append( "Call to " );
 		growingString.append( functionName );
 		VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-		multiplexerCheckParameters( multiplexer, 0, params... );
-		multiplexerEffectParameters( multiplexer, 0, params... );
+		multiplexer.checkParameterPack( 0, params... );
+		multiplexer.effectParameterPack( 0, params... );
 		const void * returnValueAsVoid = 0;
 		ReturnValue * returnValueUnused = 0;
 		multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );
@@ -270,8 +270,8 @@ ReturnValue voodooMoveCall( const char * functionName, Params&... params )
 		growingString.append( "Call to " );
 		growingString.append( functionName );
 		VoodooCommon::Expect::Multiplexer multiplexer( growingString.result() );
-		multiplexerCheckParameters( multiplexer, 0, params... );
-		multiplexerEffectParameters( multiplexer, 0, params... );
+		multiplexer.checkParameterPack( 0, params... );
+		multiplexer.effectParameterPack( 0, params... );
 		const void * returnValueAsVoid = 0;
 		ReturnValue * returnValueUnused = 0;
 		multiplexer.returnValue( VoodooCommon::PointerTypeString( returnValueUnused ).typeString(), returnValueAsVoid );

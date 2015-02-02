@@ -86,8 +86,21 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "constructorDefinition", templatePrefix = "", name = "SuperDuper", text = "SuperDuper",
                 returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
-                dict( name = "a", text = "int a" ),
-                dict( name = "b", text = "const char * b" ), ] ),
+                dict( name = "a", text = "int a", isParameterPack = False ),
+                dict( name = "b", text = "const char * b", isParameterPack = False ), ] ),
+            dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_variadicConstructor( self ):
+        self._simpleTest( "class SuperDuper { public: \ntemplate< typename T, typename... ARGS >\nSuperDuper( T a, ARGS... b ) {}\n int c; };", [
+            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classSuperDuper{public:template<typenameT,typename...ARGS>SuperDuper(Ta,ARGS...b){}intc;}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "constructorDefinition", templatePrefix = "template < typename T , typename ... ARGS >", name = "SuperDuper", text = "SuperDuper",
+                returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
+                dict( name = "a", text = "T a", isParameterPack = False ),
+                dict( name = "b", text = "ARGS ... b", isParameterPack = True ), ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -99,8 +112,8 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "constructorDefinition", templatePrefix = "template < typename T >", name = "SuperDuper", text = "SuperDuper",
                 returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
-                dict( name = "a", text = "T a" ),
-                dict( name = "b", text = "const char * b" ), ] ),
+                dict( name = "a", text = "T a", isParameterPack = False ),
+                dict( name = "b", text = "const char * b", isParameterPack = False ), ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -130,7 +143,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
                 returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [
-                dict( name = "a", text = "int a" ) ] ),
+                dict( name = "a", text = "int a", isParameterPack = False ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -142,7 +155,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
                 returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [
-                dict( name = "a", text = "int a" ) ] ),
+                dict( name = "a", text = "int a", isParameterPack = False ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -154,7 +167,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
                 returnRValue = False, returnType = "int", static = True, virtual = False, const = False, parameters = [
-                dict( name = "a", text = "int a" ) ] ),
+                dict( name = "a", text = "int a", isParameterPack = False ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -166,7 +179,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction", text = "aFunction",
                 returnRValue = False, returnType = "int", static = False, virtual = False, const = True, parameters = [
-                dict( name = "a", text = "int a" ) ] ),
+                dict( name = "a", text = "int a", isParameterPack = False ) ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),
         ] )
@@ -269,7 +282,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "accessSpec", access = "public" ),
             dict( callbackName = "method", templatePrefix = "", name = "operator==", text = "operator==",
                 returnRValue = False, returnType = "bool", static = False, virtual = False, const = False, parameters = [
-                    dict( name = "other", text = "int other" ) ] ),
+                    dict( name = "other", text = "int other", isParameterPack = False ) ] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -379,7 +392,17 @@ class TestCPPParsing( unittest.TestCase ):
                 fullTextNaked = "classA{template<typenameT>intaFunction(Ta){return0;}}" ),
             dict( callbackName = "method", templatePrefix = "template < typename T >", name = "aFunction",
                 text = "aFunction", returnRValue = False, returnType = "int", static = False, virtual = False, const = False,
-                parameters = [ dict( name = "a", text = "T a" ) ] ),
+                parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_variadicTemplateMethod( self ):
+        self._simpleTest( "class A {template < typename... ARGS > int aFunction( ARGS... a ) { return 0; }};", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [], templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classA{template<typename...ARGS>intaFunction(ARGS...a){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "template < typename ... ARGS >", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "int", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "ARGS ... a", isParameterPack = True ) ] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -415,7 +438,7 @@ class TestCPPParsing( unittest.TestCase ):
                 fullTextNaked = "template<typenameT>classA{TaFunction(Ta){return0;}}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction",
                 text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
-                parameters = [ dict( name = "a", text = "T a" ) ] ),
+                parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
             dict( callbackName = "leaveClass" ),
         ] )
 
@@ -434,7 +457,7 @@ class TestCPPParsing( unittest.TestCase ):
                 fullTextNaked = "template<typenameT>structA{TaFunction(Ta){return0;}}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction",
                 text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
-                parameters = [ dict( name = "a", text = "T a" ) ] ),
+                parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
             dict( callbackName = "leaveClass" ),
         ] )
 

@@ -24,22 +24,27 @@ class VoodooExpectFunction:
         self._code.lineOut( "}" )
         self._code.lineOut( "" )
 
-    def _implementParametersHandeling( self, decomposition ):
+    def _implementParametersHandeling( self, decomposition, shouldIgnoreParameterPack = False ):
         for index in xrange( len( decomposition.parameters ) ):
             parameter = decomposition.parameters[ index ]
-            self._code.lineOut( '\tmultiplexer.check' +
-                '( %d, ' % index +
-                'VoodooCommon::PointerTypeString( & %s ).typeString(), ' % parameter[ 'name' ] +
-                '& %s );' % parameter[ 'name' ] )
-        self._code.lineOut( '\tmultiplexer.check' +
-                '( %d, "VOODOO_NO_MORE_PARAMETERS", 0 );' %
-                        len( decomposition.parameters ) )
+            if not parameter.get( 'isParameterPack', False ):
+                self._code.lineOut( '\tmultiplexer.check' +
+                    '( %d, ' % index +
+                    'VoodooCommon::PointerTypeString( & %s ).typeString(), ' % parameter[ 'name' ] +
+                    '& %s );' % parameter[ 'name' ] )
+            elif not shouldIgnoreParameterPack:
+                self._code.lineOut( '\tmultiplexer.checkParameterPack( %s, ' % index +
+                        '%s... ); ' % parameter[ 'name' ] )
         for index in xrange( len( decomposition.parameters ) ):
             parameter = decomposition.parameters[ index ]
-            self._code.lineOut( '\tmultiplexer.effect' +
-                '( %d, ' % index +
-                'VoodooCommon::PointerTypeString( & %s ).typeString(), ' % parameter[ 'name' ] +
-                '& %s );' % parameter[ 'name' ] )
+            if not parameter.get( 'isParameterPack', False ):
+                self._code.lineOut( '\tmultiplexer.effect' +
+                    '( %d, ' % index +
+                    'VoodooCommon::PointerTypeString( & %s ).typeString(), ' % parameter[ 'name' ] +
+                    '& %s );' % parameter[ 'name' ] )
+            elif not shouldIgnoreParameterPack:
+                self._code.lineOut( '\tmultiplexer.effectParameterPack( %s, ' % index +
+                        '%s... ); ' % parameter[ 'name' ] )
 
     def _implementReturnValue( self, decomposition ):
         nonReferenceType = self._nonReferenceType( decomposition )

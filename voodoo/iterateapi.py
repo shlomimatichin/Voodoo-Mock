@@ -227,7 +227,9 @@ class IterateAPI:
                 if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ] ]
     def __parseParameter( self, node, lastParameter ):
         terminator = ')' if lastParameter else ','
-        return dict( name = node.spelling, text = self.__nodeText( node, terminatorCharacter = terminator ) )
+        isParameterPack = True if "..." in node.type.spelling else False
+        return dict( name = node.spelling, text = self.__nodeText( node, terminatorCharacter = terminator ),
+                     isParameterPack = isParameterPack )
 
     def __textualType( self, type ):
         if type.kind == cindex.TypeKind.VOID:

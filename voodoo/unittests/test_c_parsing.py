@@ -91,15 +91,15 @@ class TestCParsing( unittest.TestCase ):
         self._simpleTest( "void aFunction( int a );", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction",
                 text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False, parameters = [
-                    dict( name = "a", text = "int a" ) ] ),
+                    dict( name = "a", text = "int a", isParameterPack = False ) ] ),
         ] )
 
     def test_globalVoidFunctionForwardDeclarationIntConstCharPParameter( self ):
         self._simpleTest( "void aFunction( int a, const char * p );", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction",
                 text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False, parameters = [
-                dict( name = "a", text = "int a" ),
-                dict( name = "p", text = "const char * p" ), ] ),
+                dict( name = "a", text = "int a", isParameterPack = False ),
+                dict( name = "p", text = "const char * p", isParameterPack = False ), ] ),
         ] )
 
     def test_VoidFunctionPointerDefinition( self ):
@@ -127,7 +127,7 @@ class TestCParsing( unittest.TestCase ):
         self._simpleTest( "int aFunction( int a ) { return a; }", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction", text = "int aFunction",
                 returnRValue = False, returnType = "int", static = True, const = False, virtual = False, parameters = [
-                dict( name = "a", text = "int a" ) ] ),
+                dict( name = "a", text = "int a", isParameterPack = False ) ] ),
         ] )
 
     def test_globalVoidFunctionDefinitionStatic( self ):
@@ -161,7 +161,7 @@ class TestCParsing( unittest.TestCase ):
             dict( callbackName = 'structForwardDeclaration', name = 'S' ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction",
                 text = "const struct S * aFunction", returnRValue = False, returnType = "const struct S *", static = True, const = False, virtual = False, parameters = [
-                dict( name = "s", text = "const struct S * s" ) ] ),
+                dict( name = "s", text = "const struct S * s", isParameterPack = False ) ] ),
         ] )
 
     def test_nonEmptyStructTypdefDefinition( self ):
@@ -223,9 +223,10 @@ extern void dev_put(struct net_device *dev);
             dict( callbackName = "variableDeclaration", name = "init_net", text = "extern struct net init_net" ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "dev_get_by_name", text = "struct net_device * dev_get_by_name",
                 returnRValue = False, returnType = "struct net_device *", static = True, const = False, virtual = False, parameters = [
-                dict( name = "net", text = "struct net * net" ),
-                dict( name = "name", text = "const char * name" ) ] ),
-            dict( callbackName = 'functionForwardDeclaration', name = 'dev_put', parameters = [ dict( name = 'dev', text = 'struct net_device * dev' ) ],
+                dict( name = "net", text = "struct net * net", isParameterPack = False ),
+                dict( name = "name", text = "const char * name", isParameterPack = False ) ] ),
+            dict( callbackName = 'functionForwardDeclaration', name = 'dev_put',
+		    parameters = [ dict( name = 'dev', text = 'struct net_device * dev', isParameterPack = False ) ],
                   returnRValue = False, returnType = 'void', static = True, templatePrefix = '', text = 'void dev_put', const = False, virtual = False )
         ] )
 

@@ -29,6 +29,18 @@ void doSomethingOnPtr( AMockedStruct * s)
 	operateOnStructPtr( s );
 }
 
+void doSomethingOnIgnoredParameterPack( int n, float f, const char * str )
+{
+	ClassWithIgnoredParameterPack c { f, n, str };
+	c.someOperation( n, f, str );
+}
+
+void doSomethingOnParameterPack( int n, float f, const char * str )
+{
+	ClassWithParameterPack c { f, n, str };
+	c.someOperation( n, f, str );
+}
+
 void doubleClear( Data & data )
 {
 	clear( data );

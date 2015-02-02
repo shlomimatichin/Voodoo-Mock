@@ -36,3 +36,4 @@ class PerFileSettings:
         self.SKIP = []
         self.NO_MOCK = []
         self.NO_INHERITS = []
+        self.IGNORE_PARAMETER_PACK = []
