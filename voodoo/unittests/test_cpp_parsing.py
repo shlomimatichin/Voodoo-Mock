@@ -66,7 +66,7 @@ class TestCPPParsing( unittest.TestCase ):
         ] )
 
     def test_namespaceAlias( self ):
-	    self._simpleTest( "namespace A { namespace B { int b; } namespace C { int c; } int a; } namespace D = A::B;", [
+        self._simpleTest( "namespace A { namespace B { int b; } namespace C { int c; } int a; } namespace D = A::B;", [
             dict( callbackName = "enterNamespace", name = "A" ),
             dict( callbackName = "enterNamespace", name = "B" ),
             dict( callbackName = "variableDeclaration", name = "b", text = "int b" ),
@@ -76,7 +76,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveNamespace" ),
             dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "leaveNamespace" ),
-	    dict( callbackName = "using", text = "namespace D = A :: B" ),
+        dict( callbackName = "using", text = "namespace D = A :: B" ),
         ] )
 
     def test_constructor( self ):
@@ -87,6 +87,19 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "constructorDefinition", templatePrefix = "", name = "SuperDuper", text = "SuperDuper",
                 returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
                 dict( name = "a", text = "int a" ),
+                dict( name = "b", text = "const char * b" ), ] ),
+            dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_templateConstructor( self ):
+        self._simpleTest( "class SuperDuper { public: \ntemplate< typename T >\nSuperDuper( T a, const char * b ) {}\n int c; };", [
+            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classSuperDuper{public:template<typenameT>SuperDuper(Ta,constchar*b){}intc;}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "constructorDefinition", templatePrefix = "template < typename T >", name = "SuperDuper", text = "SuperDuper",
+                returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
+                dict( name = "a", text = "T a" ),
                 dict( name = "b", text = "const char * b" ), ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
             dict( callbackName = "leaveClass" ),

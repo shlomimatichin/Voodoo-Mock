@@ -214,6 +214,19 @@ public:
 			throw TestFailed();
 	}
 
+	void test_createWithTemplateConstructor()
+	{
+		Scenario scenario;
+		scenario <<
+			new Construction< StructWithTemplateConstructor >( "class" ) <<
+			new EqualsValue< int >( 400 ) <<
+			new Destruction( "class" );
+
+		createWithTemplateConstructor( 400 );
+
+		scenario.assertFinished();
+	}
+
 	void test_SimplePredicate()
 	{
 		class MarkString { public:

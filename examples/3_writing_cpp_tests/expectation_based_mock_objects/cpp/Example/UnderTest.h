@@ -98,5 +98,10 @@ void markLog()
 	logMessage( "MARK" );
 }
 
+void createWithTemplateConstructor( int n )
+{
+	StructWithTemplateConstructor c { n };
+}
+
 #endif // __UNDERTEST_H_
 // FILE_EXEMPT_FROM_CODE_COVERAGE

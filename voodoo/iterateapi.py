@@ -128,15 +128,20 @@ class IterateAPI:
                                                                 static = True,
                                                                 const = False )
             self.functionDefinition( decomposition = decomposition )
-        elif node.kind == cindex.CursorKind.CONSTRUCTOR:
+        elif ( node.kind == cindex.CursorKind.CONSTRUCTOR or
+               ( node.kind == cindex.CursorKind.FUNCTION_TEMPLATE and node.spelling == node.lexical_parent.spelling ) ):
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
+            templatePrefix = ""
+            if node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
+                templatePrefix = self.__templatePrefix( node )
             decomposition = functiondecomposition.FunctionDecomposition(
                                                                 name = node.spelling,
                                                                 text = node.spelling,
                                                                 parameters = parameters,
                                                                 returnType = None,
                                                                 returnRValue = False,
+                                                                templatePrefix = templatePrefix,
                                                                 static = None,
                                                                 const = False )
             self.constructorDefinition( decomposition = decomposition )

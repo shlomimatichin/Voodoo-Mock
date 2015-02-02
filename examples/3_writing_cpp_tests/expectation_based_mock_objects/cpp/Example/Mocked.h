@@ -6,6 +6,12 @@
 
 struct AMockedStruct {};
 
+struct StructWithTemplateConstructor
+{
+	template< typename T >
+	StructWithTemplateConstructor( T i );
+};
+
 void operateOnStruct( AMockedStruct & s );
 void operateOnStructPtr( AMockedStruct * s );
 void operateOnStructUniquePtr( std::unique_ptr< AMockedStruct > s );
