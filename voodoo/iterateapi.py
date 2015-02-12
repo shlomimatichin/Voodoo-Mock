@@ -128,15 +128,20 @@ class IterateAPI:
                                                                 static = True,
                                                                 const = False )
             self.functionDefinition( decomposition = decomposition )
-        elif node.kind == cindex.CursorKind.CONSTRUCTOR:
+        elif ( node.kind == cindex.CursorKind.CONSTRUCTOR or
+               ( node.kind == cindex.CursorKind.FUNCTION_TEMPLATE and node.spelling == node.lexical_parent.spelling ) ):
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
+            templatePrefix = ""
+            if node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
+                templatePrefix = self.__templatePrefix( node )
             decomposition = functiondecomposition.FunctionDecomposition(
                                                                 name = node.spelling,
                                                                 text = node.spelling,
                                                                 parameters = parameters,
                                                                 returnType = None,
                                                                 returnRValue = False,
+                                                                templatePrefix = templatePrefix,
                                                                 static = None,
                                                                 const = False )
             self.constructorDefinition( decomposition = decomposition )
@@ -222,7 +227,9 @@ class IterateAPI:
                 if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ] ]
     def __parseParameter( self, node, lastParameter ):
         terminator = ')' if lastParameter else ','
-        return dict( name = node.spelling, text = self.__nodeText( node, terminatorCharacter = terminator ) )
+        isParameterPack = True if "..." in node.type.spelling else False
+        return dict( name = node.spelling, text = self.__nodeText( node, terminatorCharacter = terminator ),
+                     isParameterPack = isParameterPack )
 
     def __textualType( self, type ):
         if type.kind == cindex.TypeKind.VOID:

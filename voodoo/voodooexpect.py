@@ -23,7 +23,11 @@ class VoodooExpect:
         return self._fullIdentifier
 
     def _implementParametersHandeling( self, decomposition ):
-        VoodooExpectFunction( self._code )._implementParametersHandeling( decomposition )
+        shouldIgnoreParameterPack = False
+        if  "::".join( [ self._fullIdentifier, decomposition.name ] ) in self._perFileSettings.IGNORE_PARAMETER_PACK:
+                shouldIgnoreParameterPack = True
+
+        VoodooExpectFunction( self._code )._implementParametersHandeling( decomposition, shouldIgnoreParameterPack = shouldIgnoreParameterPack )
 
     def _implementReturnValue( self, decomposition ):
         VoodooExpectFunction( self._code )._implementReturnValue( decomposition )
@@ -163,7 +167,7 @@ class VoodooExpect:
                             parameters = [ dict( name = "other", text = "const %s & other" % self._identifier ) ],
                             text = "%s & operator=" % self._identifier,
                             returnType = "%s &" % self._identifier,
-			                 returnRValue = False,
+                             returnRValue = False,
                             static = False,
                             const = False )
             self.method( decomposition )

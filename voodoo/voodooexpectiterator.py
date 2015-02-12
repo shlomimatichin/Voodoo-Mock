@@ -66,6 +66,7 @@ class VoodooExpectIterator( VoodooIterator ):
         expect.implementExpectingClassFooter()
         expect.implementFakeClass( expect.fullIdentifier() )
         expect.implementFakeNDClass( expect.fullIdentifier() )
+        self.inClass.pop()
 
     def _function( self, decomposition ):
         VoodooExpectFunction( self.code() ).function( decomposition )

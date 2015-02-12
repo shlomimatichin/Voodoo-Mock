@@ -125,6 +125,30 @@ public:
 		}
 	}
 
+void checkParameterPack( unsigned parameterIndex )
+{
+	check( parameterIndex, "VOODOO_NO_MORE_PARAMETERS", 0 );
+}
+
+template < typename P, typename... Params >
+void checkParameterPack( unsigned parameterIndex, P & p1, Params&... params )
+{
+	check( parameterIndex, VoodooCommon::PointerTypeString( & p1 ).typeString(), & p1 );
+	checkParameterPack( parameterIndex + 1, params... );
+}
+
+void effectParameterPack( unsigned parameterIndex )
+{
+	// no-op
+}
+
+template < typename P, typename... Params >
+void effectParameterPack( unsigned parameterIndex, P &	p1, Params&... params )
+{
+	effect( parameterIndex, VoodooCommon::PointerTypeString( & p1 ).typeString(), & p1 );
+	effectParameterPack( parameterIndex + 1, params... );
+}
+
 private:
 	enum { MAX_SCENARIO_CANDIDATES = 64 };
 	Scenario *	_scenarioCandidates[ MAX_SCENARIO_CANDIDATES ];

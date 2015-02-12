@@ -214,6 +214,19 @@ public:
 			throw TestFailed();
 	}
 
+	void test_createWithTemplateConstructor()
+	{
+		Scenario scenario;
+		scenario <<
+			new Construction< StructWithTemplateConstructor >( "class" ) <<
+			new EqualsValue< int >( 400 ) <<
+			new Destruction( "class" );
+
+		createWithTemplateConstructor( 400 );
+
+		scenario.assertFinished();
+	}
+
 	void test_SimplePredicate()
 	{
 		class MarkString { public:
@@ -300,6 +313,40 @@ public:
 			new CallReturnVoid( "logMessage" ) <<
 			new Strcmp( "MARK" );
 		markLog();
+		scenario.assertFinished();
+	}
+
+	void test_operateOnParameterPack()
+	{
+		const char ** savedString1 { nullptr };
+		const char ** savedString2 { nullptr };
+		Scenario scenario;
+		scenario <<
+			new Construction< ClassWithParameterPack >( "class" ) <<
+				new EqualsValue< float >( 6.0 ) <<
+				new EqualsValue< int >( 5 ) <<
+				new SaveValue< const char * >( savedString1 ) <<
+			new CallReturnVoid( "class::someOperation" ) <<
+				new EqualsValue< int >( 5 ) <<
+				new EqualsValue< float >( 6.0 ) <<
+				new SaveValue< const char * >( savedString2 ) <<
+			new Destruction( "class" );
+		doSomethingOnParameterPack( 5, 6.0, "hello" );
+		scenario.assertFinished();
+		TS_ASSERT_EQUALS( *savedString1, "hello" );
+		TS_ASSERT_EQUALS( *savedString2, "hello" );
+	}
+
+	void test_ignoreOperateOnParameterPack()
+	{
+		Scenario scenario;
+		scenario <<
+			new Construction< ClassWithIgnoredParameterPack >( "class" ) <<
+				new EqualsValue< float >( 6.0 ) <<
+			new CallReturnVoid( "class::someOperation" ) <<
+				new EqualsValue< int >( 5 ) <<
+			new Destruction( "class" );
+		doSomethingOnIgnoredParameterPack( 5, 6.0, "hello" );
 		scenario.assertFinished();
 	}
 
