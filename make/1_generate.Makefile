@@ -41,7 +41,7 @@ generateVoodooForce:
 generateSingleVoodoo:
 	$(Q)$(__VOODOO_SINGLE_EXECUTABLE) --input=$(SINGLE_HEADER) --output=/tmp/t.h $(__VOODOO_FLAGS)
 
-build/voodoo/%.h:
+$(VOODOO_MIRROR_TREE)/%.h:
 	@mkdir -p $(@D)
 	@echo 'VOODOOEX' $@
 	$(Q)$(__VOODOO_SINGLE_EXECUTABLE) --input=$< --output=$@ $(__VOODOO_FLAGS) $(VOODOO_EXTERNALS_FLAGS)

@@ -90,7 +90,11 @@ static inline void printTrace()
     name_buf[readlink("/proc/self/exe", name_buf, 511)]=0;
     char output_name[128];
     strcpy(output_name, "/tmp/stacktrace.XXXXXX");
-    mkstemp(output_name);
+    int result = mkstemp(output_name);
+    if (result != 0) {
+        printf( "Unable to show stack trace, mkstemp failed %d\n", result );
+        return;
+    }
     int child_pid = fork();
     if (!child_pid) {           
         int output = open( output_name, O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR );
