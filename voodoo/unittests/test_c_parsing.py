@@ -2,15 +2,28 @@ import unittest
 import savingiterator
 import tempfile
 import pprint
+import os
+import platform
 
 class TestCParsing( unittest.TestCase ):
     def setUp( self ):
         self.maxDiff = None
 
     def _tempfile( self, contents ):
-        t = tempfile.NamedTemporaryFile( suffix = ".h" )
+        #
+        # From the python documentation:
+        # Whether the name can be used to open the file a second time, while the
+        # named temporary file is still open, varies across platforms (it can be 
+        # so used on Unix; it cannot  on Windows NT or later).
+        # 
+        if platform.system() == "Windows":
+            t = tempfile.NamedTemporaryFile( suffix = ".h", delete=False )
+        else:
+            t = tempfile.NamedTemporaryFile( suffix = ".h" )
         t.write( contents )
         t.flush()
+        if platform.system() == "Windows":
+          t.close()
         return t
 
     def _simpleTest( self, contents, expected ):
@@ -21,6 +34,8 @@ class TestCParsing( unittest.TestCase ):
             pprint.pprint( tested.saved )
             pprint.pprint( expected )
         self.assertEquals( tested.saved, expected )
+        if platform.system() == "Windows":
+          os.remove( contentsFile.name )
 
     def test_structDeclaration( self ):
         self._simpleTest( "struct name_of_struct;", [ dict( callbackName = "structForwardDeclaration", name = "name_of_struct" ) ] )
@@ -54,50 +69,50 @@ class TestCParsing( unittest.TestCase ):
     def test_globalVoidFunctionForwardDeclaration( self ):
         self._simpleTest( "void aFunction();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False ),
+                text = "void aFunction", returnRValue = False, returnType = "void", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalIntFunctionForwardDeclaration( self ):
         self._simpleTest( "int aFunction();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "int aFunction", returnRValue = False, returnType = "int", static = True, const = False, virtual = False ),
+                text = "int aFunction", returnRValue = False, returnType = "int", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalConstIntFunctionForwardDeclaration( self ):
         self._simpleTest( "const int aFunction();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "const int aFunction", returnRValue = False, returnType = "const int", static = True, const = False, virtual = False ),
+                text = "const int aFunction", returnRValue = False, returnType = "const int", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalConstCharPFunctionForwardDeclaration( self ):
         self._simpleTest( "const char * aFunction();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "const char * aFunction", returnRValue = False, returnType = "const char *", static = True, const = False, virtual = False ),
+                text = "const char * aFunction", returnRValue = False, returnType = "const char *", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalConstCharPConstFunctionForwardDeclaration( self ):
         self._simpleTest( "const char * const aFunction();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "const char * const aFunction", returnRValue = False, returnType = "const char * const", static = True, const = False, virtual = False ),
+                text = "const char * const aFunction", returnRValue = False, returnType = "const char * const", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalUnsignedLongLongFunctionForwardDeclaration( self ):
         self._simpleTest( "unsigned long long aFunction();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "unsigned long long aFunction", returnRValue = False, returnType = "unsigned long long", static = True, const = False, virtual = False ),
+                text = "unsigned long long aFunction", returnRValue = False, returnType = "unsigned long long", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalVoidFunctionForwardDeclarationIntParameter( self ):
         self._simpleTest( "void aFunction( int a );", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction",
-                text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False, parameters = [
+                text = "void aFunction", returnRValue = False, returnType = "void", static = False, const = False, virtual = False, parameters = [
                     dict( name = "a", text = "int a", isParameterPack = False ) ] ),
         ] )
 
     def test_globalVoidFunctionForwardDeclarationIntConstCharPParameter( self ):
         self._simpleTest( "void aFunction( int a, const char * p );", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "aFunction",
-                text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False, parameters = [
+                text = "void aFunction", returnRValue = False, returnType = "void", static = False, const = False, virtual = False, parameters = [
                 dict( name = "a", text = "int a", isParameterPack = False ),
                 dict( name = "p", text = "const char * p", isParameterPack = False ), ] ),
         ] )
@@ -120,32 +135,32 @@ class TestCParsing( unittest.TestCase ):
     def test_globalVoidFunctionDefinition( self ):
         self._simpleTest( "void aFunction() {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False ),
+                text = "void aFunction", returnRValue = False, returnType = "void", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalVoidFunctionDefinitionWithInts( self ):
         self._simpleTest( "int aFunction( int a ) { return a; }", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction", text = "int aFunction",
-                returnRValue = False, returnType = "int", static = True, const = False, virtual = False, parameters = [
+                returnRValue = False, returnType = "int", static = False, const = False, virtual = False, parameters = [
                 dict( name = "a", text = "int a", isParameterPack = False ) ] ),
         ] )
 
     def test_globalVoidFunctionDefinitionStatic( self ):
         self._simpleTest( "static void aFunction() {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False ),
+                text = "void aFunction", returnRValue = False, returnType = "void", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalVoidFunctionDefinitionInline( self ):
         self._simpleTest( "inline void aFunction() {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False ),
+                text = "void aFunction", returnRValue = False, returnType = "void", static = False, const = False, virtual = False ),
         ] )
 
     def test_globalVoidFunctionDefinitionStaticInline( self ):
         self._simpleTest( "static inline void aFunction() {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction", parameters = [],
-                text = "void aFunction", returnRValue = False, returnType = "void", static = True, const = False, virtual = False ),
+                text = "void aFunction", returnRValue = False, returnType = "void", static = False, const = False, virtual = False ),
         ] )
 
     def test_nonEmptyStructDefinition( self ):
@@ -160,7 +175,7 @@ class TestCParsing( unittest.TestCase ):
         self._simpleTest( "const struct S * aFunction( const struct S * s ) { return 0; }", [
             dict( callbackName = 'structForwardDeclaration', name = 'S' ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction",
-                text = "const struct S * aFunction", returnRValue = False, returnType = "const struct S *", static = True, const = False, virtual = False, parameters = [
+                text = "const struct S * aFunction", returnRValue = False, returnType = "const struct S *", static = False, const = False, virtual = False, parameters = [
                 dict( name = "s", text = "const struct S * s", isParameterPack = False ) ] ),
         ] )
 
@@ -222,12 +237,12 @@ extern void dev_put(struct net_device *dev);
             dict( callbackName = "leaveStruct" ),
             dict( callbackName = "variableDeclaration", name = "init_net", text = "extern struct net init_net" ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "dev_get_by_name", text = "struct net_device * dev_get_by_name",
-                returnRValue = False, returnType = "struct net_device *", static = True, const = False, virtual = False, parameters = [
+                returnRValue = False, returnType = "struct net_device *", static = False, const = False, virtual = False, parameters = [
                 dict( name = "net", text = "struct net * net", isParameterPack = False ),
                 dict( name = "name", text = "const char * name", isParameterPack = False ) ] ),
             dict( callbackName = 'functionForwardDeclaration', name = 'dev_put',
 		    parameters = [ dict( name = 'dev', text = 'struct net_device * dev', isParameterPack = False ) ],
-                  returnRValue = False, returnType = 'void', static = True, templatePrefix = '', text = 'void dev_put', const = False, virtual = False )
+                  returnRValue = False, returnType = 'void', static = False, templatePrefix = '', text = 'void dev_put', const = False, virtual = False )
         ] )
 
     def test_defines( self ):
@@ -241,11 +256,23 @@ extern void dev_put(struct net_device *dev);
             pprint.pprint( expected )
         self.assertEquals( tested.saved, expected )
 
+    # If the purpose of this test is to validate the redefinition of size_t, it fails with
+	# a 64 bits version of gcc on windows (x86_64-w64-mingw32-c++.exe) with the following error:
+	#   <SourceLocation file 'c:\\cygwin\\distcc\\tmp\\tmpgykt8v.h', line 1, column 23>
+	#   typedef redefinition with different types ('unsigned long' vs 'unsigned int')
+	#   <clang.cindex.RangeIterator instance at 0x0212EC60>
+	#   <clang.cindex.FixItIterator instance at 0x0212EC88>
+	#
+	# If the purpose of this test is to validate that a function can use a typedef'ed type,
+	# size_t can be renamed to eliminate the collision with the system declaration.
+	#
+	# The second possibility is considered the right one as it is easier to address :)
+	# 
     def test_BugfixTypedef1( self ):
-        self._simpleTest( "typedef unsigned long size_t; size_t defunc();", [
-            dict( callbackName = "typedef", name = "size_t", text = "typedef unsigned long size_t" ),
-            dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "defunc", text = "size_t defunc",
-                returnRValue = False, returnType = "size_t", static = True, parameters = [], const = False, virtual = False ),
+        self._simpleTest( "typedef unsigned long a_size_t; a_size_t defunc();", [
+            dict( callbackName = "typedef", name = "a_size_t", text = "typedef unsigned long a_size_t" ),
+            dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "defunc", text = "a_size_t defunc",
+                returnRValue = False, returnType = "a_size_t", static = False, parameters = [], const = False, virtual = False ),
         ] )
 
     def test_StaticVariableShouldNotRemainStaticToAvoidCompilationError( self ):
@@ -256,14 +283,14 @@ extern void dev_put(struct net_device *dev);
         self._simpleTest( "int func() { if ( 1 ) { return 1; } else { return 0; } }", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func",
                 text = "int func",
-                returnRValue = False, returnType = "int", static = True, parameters = [], const = False, virtual = False ),
+                returnRValue = False, returnType = "int", static = False, parameters = [], const = False, virtual = False ),
         ] )
 
     def test_BugfixHashPoundParsedIntoFunctionDeclarationSyntaticUnit( self ):
         self._simpleTest( "#if 1\nint func() { return 0; }\n#endif", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func",
                 text = "int func",
-                returnRValue = False, returnType = "int", static = True, parameters = [], const = False, virtual = False ),
+                returnRValue = False, returnType = "int", static = False, parameters = [], const = False, virtual = False ),
         ] )
 
     def test_unionDeclaration( self ):

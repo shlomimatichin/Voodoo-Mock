@@ -5,7 +5,11 @@ include $(VOODOO_ROOT_DIR)/make/common.Makefile
 UNITTEST_CXXFLAGS ?= -DDEBUG -DUNITTEST
 UNITTEST_INCLUDES ?= -I.
 UNITTEST_LDFLAGS ?=
+ifdef SystemRoot
+UNITTEST_LIBS ?= 
+else
 UNITTEST_LIBS ?= -ldl
+endif
 
 UNITTEST_CXXFLAGS += -std=gnu++0x -Werror -Wall -ggdb -DDEBUG -DUNITTEST --coverage
 UNITTEST_LDFLAGS += --coverage

@@ -3,15 +3,22 @@ generateTests: generateCxxtest generateVoodoo
 include $(VOODOO_ROOT_DIR)/make/common.Makefile
 
 VOODOO_SCAN_HEADERS_ROOTS ?= .
-VOODOO_MULTI_EXCLUDES ?= '\btests/'
+VOODOO_MULTI_EXCLUDES ?= "\btests\b"
 VOODOO_FLAGS ?= --define=DEBUG --define=BOOST_ASIO_HAS_MOVE
 VOODOO_EXTERNALS_FLAGS ?=
 VOODOO_INCLUDES ?= --includePath=.
 
+ifdef SystemRoot
+# Windows system
+__VOODOO_ENVIRONMENT=set PYTHONPATH=$(VOODOO_ROOT_DIR)/voodoo & set LD_LIBRARY_PATH=$(VOODOO_ROOT_DIR)/voodoo;%LD_LIBRARY_PATH% &
+else
+#Non-winsodw system
 __VOODOO_ENVIRONMENT = PYTHONPATH=$(VOODOO_ROOT_DIR)/voodoo LD_LIBRARY_PATH=$(VOODOO_ROOT_DIR)/voodoo:$(LD_LIBRARY_PATH)
+endif
+
 __VOODOO_MULTI_EXECUTABLE = $(__VOODOO_ENVIRONMENT) python $(VOODOO_ROOT_DIR)/voodoo/multi.py
 __VOODOO_MULTI_INPUT = $(addprefix --input=,$(VOODOO_SCAN_HEADERS_ROOTS))
-__VOODOO_MULTI_EXCLUDES = $(addprefix --exclude=,$(VOODOO_MULTI_EXCLUDES) '\b$(UNITTEST_BUILD_DIRECTORY)\b')
+__VOODOO_MULTI_EXCLUDES = $(addprefix --exclude=,$(VOODOO_MULTI_EXCLUDES) \b$(UNITTEST_BUILD_DIRECTORY)\b)
 __VOODOO_SINGLE_EXECUTABLE = $(__VOODOO_ENVIRONMENT) python $(VOODOO_ROOT_DIR)/voodoo/single.py
 __VOODOO_FLAGS = $(VOODOO_FLAGS) --voodooDB=$(UNITTEST_BUILD_DIRECTORY)/voodooDB.tmp $(VOODOO_INCLUDES)
 
@@ -29,24 +36,24 @@ generateCxxtest: $(CXXTEST_GENERATED)
 
 generateVoodoo:
 	@echo "Generating voodoo mirror tree"
-	-@mkdir --parents $(VOODOO_MIRROR_TREE)
+	$(Q)$(call MKDIR,$(VOODOO_MIRROR_TREE))
 	$(Q)$(__VOODOO_MULTI_EXECUTABLE) $(__VOODOO_MULTI_INPUT) --output=$(VOODOO_MIRROR_TREE) --concurrent $(__VOODOO_FLAGS) $(__VOODOO_MULTI_EXCLUDES) --onlyIfNew
 
 #TODO: missing force external headers
 generateVoodooForce:
 	@echo "Force Generating voodoo mirror tree"
-	-@mkdir --parents $(VOODOO_MIRROR_TREE)
+	$(Q)$(call MKDIR,$(VOODOO_MIRROR_TREE))
 	$(Q)$(__VOODOO_MUTLI_EXECUTABLE) $(__VOODOO_MULTI_INPUT) --output=$(VOODOO_MIRROR_TREE) --concurrent $(__VOODOO_FLAGS) $(__VOODOO_MULTI_EXCLUDES)
 
 generateSingleVoodoo:
 	$(Q)$(__VOODOO_SINGLE_EXECUTABLE) --input=$(SINGLE_HEADER) --output=/tmp/t.h $(__VOODOO_FLAGS)
 
 $(VOODOO_MIRROR_TREE)/%.h:
-	@mkdir -p $(@D)
+	$(Q)$(call MKDIR,$(@D))
 	@echo 'VOODOOEX' $@
 	$(Q)$(__VOODOO_SINGLE_EXECUTABLE) --input=$< --output=$@ $(__VOODOO_FLAGS) $(VOODOO_EXTERNALS_FLAGS)
 
 $(UNITTEST_BUILD_DIRECTORY)/%.cxx:
-	-$(Q)mkdir --parents $(@D)
+	-$(Q)$(call MKDIR,$(@D))
 	@echo 'CXXTSTGN' $@
 	$(Q)python $(VOODOO_ROOT_DIR)/cxxtest/simplecxxtestgen.py --output=$@ --input=$< 

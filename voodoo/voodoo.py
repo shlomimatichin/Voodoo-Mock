@@ -46,3 +46,32 @@ def externalVoodoo( input, output, linkTo, pathToRemoveFromIdentifier = "", trac
 	out += "\n}\n\n"
 	out += preprocessor.externalFooter()
 	return out
+
+
+def voodooExpectSource( input, output, pathToRemoveFromIdentifier, voodooDBFile, includes, defines, preIncludes, trace = False ):
+	inputLines = _readLinesOfFile( input )
+	perFileSettings = PerFileSettings( inputLines )
+	preprocessor = Preprocessor( input, output, inputLines, pathToRemoveFromIdentifier )
+
+	iterator = VoodooMultiplexerIterator( perFileSettings, voodooDBFile )
+	iterator.process( input, includes = includes, defines = defines, preIncludes = preIncludes )
+
+	out = preprocessor.headerOfHeader() + '\n'
+	out += '#include "VoodooCommon/All.h"\n\n'
+
+	out += iterator.expect()
+	return out
+
+
+def voodooExpectHeader( input, output, pathToRemoveFromIdentifier, voodooDBFile, includes, defines, preIncludes, trace = False ):
+	inputLines = _readLinesOfFile( input )
+	perFileSettings = PerFileSettings( inputLines )
+	preprocessor = Preprocessor( input, output, inputLines, pathToRemoveFromIdentifier )
+
+	iterator = VoodooMultiplexerIterator( perFileSettings, voodooDBFile )
+	iterator.process( input, includes = includes, defines = defines, preIncludes = preIncludes )
+
+	out = preprocessor.headerOfHeader() + '\n'
+        
+	return out
+

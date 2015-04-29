@@ -40,31 +40,31 @@ $(foreach target,$(filter SHAREDLIBRARY_%, $(.VARIABLES)), \
 )
 
 build/cpp/%.o: cpp/%.cpp
-	@mkdir -p $(@D)
+	$(Q)$(call MKDIR, $(@D))
 	@echo 'C++     ' $@
 	$(Q)g++ $(CXXFLAGS) $($(subst /,_,$(subst .,_,$*))_o_CFLAGS) -MMD -MF $@.deps -c $< -o $@
 
 build/c/%.o: c/%.c
-	@mkdir -p $(@D)
+	$(Q)$(call MKDIR, $(@D))
 	@echo 'C       ' $@
 	$(Q)gcc $(CFLAGS) $($(subst /,_,$(subst .,_,$*))_o_CFLAGS) -MMD -MF $@.deps -c $< -o $@
 
 build/cpp/%.bin:
-	@mkdir -p $(@D)
+	$(Q)$(call MKDIR, $(@D))
 	@echo 'LINK++  ' $@
 	$(Q)g++ $(LDFLAGS) -o $@ $^ $($*_LDFLAGS) $($*_LIBRARIES)
 
 build/c/%.bin:
-	@mkdir -p $(@D)
+	$(Q)$(call MKDIR, $(@D))
 	@echo 'LINK    ' $@
 	$(Q)gcc $(LDFLAGS) -o $@ $^ $($*_LDFLAGS) $($*_LIBRARIES)
 
 build/cpp/%.so:
-	@mkdir -p $(@D)
+	$(Q)$(call MKDIR, $(@D))
 	@echo 'LINK++  ' $@
 	$(Q)g++ -shared $(LDFLAGS) -o $@ $^ $($*_LDFLAGS) $($*_LIBRARIES)
 
 build/c/%.so:
-	@mkdir -p $(@D)
+	$(Q)$(call MKDIR, $(@D))
 	@echo 'LINK    ' $@
 	$(Q)gcc -shared $(LDFLAGS) -o $@ $^ $($*_LDFLAGS) $($*_LIBRARIES)

@@ -4,6 +4,7 @@ import os
 import stat
 import re
 import voodoo
+import multiprocessing
 import preprocessor
 import argparse
 import traceback
@@ -43,6 +44,10 @@ def isInput( fullName ):
         if re.search( exclude, fullName ) is not None:
             return False
     return True
+
+def createCFilename( fullName ):
+    base_file, ext = os.path.splitext(fullName)
+    return base_file + ".c"
 
 def mtime( fullName ):
     return os.stat( fullName )[ stat.ST_MTIME ]
@@ -106,8 +111,76 @@ def voodooOneFile( fullName, inputPath, fileList ):
                                                 len( fileList ),
                                                 state, fullOutput ) )
 
+def voodooOneFileSource( fullName, inputPath, fileList ):
+    fullOutput = fullOutputName( fullName, inputPath )
+    mkdirOf( fullOutput )
+    output = ''
+    try:
+        output += voodoo.voodooExpectHeader(    input = fullName,
+                                    output = fullOutput,
+                                    pathToRemoveFromIdentifier = inputPath,
+                                    voodooDBFile = args.voodooDB,
+                                    includes = args.includePath,
+                                    defines = args.define,
+                                    trace = False,
+                                    preIncludes = args.preInclude )
+        state = "V"
+    except Exception, e:
+        if str(e).find( "all argume" ) != -1:
+            raise
+        inputLines = voodoo._readLinesOfFile( fullName )
+        prepro = preprocessor.Preprocessor( fullName, fullOutput, inputLines, inputPath )
+        output += prepro.intercepter()
+        output += "\n/* The error that forced interception:\n" + \
+                    str( e ).replace( "*/", "* /" ) + "\n"
+        output += "\n"
+        output += "Voodoo stack trace:\n" + traceback.format_exc()
+        output += "*/\n"
+        output += "\n"
+        state = "I"
+    f = file( fullOutput, "w" )
+    f.write( output )
+    f.flush()
+    f.close()
+
+    fullOutput = createCFilename( fullOutput ) 
+    mkdirOf( fullOutput )
+    output = ''
+    try:
+        output += voodoo.voodooExpectSource(    input = fullName,
+                                    output = fullOutput,
+                                    pathToRemoveFromIdentifier = inputPath,
+                                    voodooDBFile = args.voodooDB,
+                                    includes = args.includePath,
+                                    defines = args.define,
+                                    trace = False,
+                                    preIncludes = args.preInclude )
+        state = "V"
+    except Exception, e:
+        if str(e).find( "all argume" ) != -1:
+            raise
+        inputLines = voodoo._readLinesOfFile( fullName )
+        prepro = preprocessor.Preprocessor( fullName, fullOutput, inputLines, inputPath )
+        output += prepro.intercepter()
+        output += "\n/* The error that forced interception:\n" + \
+                    str( e ).replace( "*/", "* /" ) + "\n"
+        output += "\n"
+        output += "Voodoo stack trace:\n" + traceback.format_exc()
+        output += "*/\n"
+        output += "\n"
+        state = "I"
+    f = file( fullOutput, "w" )
+    f.write( output )
+    f.flush()
+    f.close()
+
+
+    sys.stdout.write( "  <%d/%d> %s  %s\n" % (    1 + fileList.index( ( fullName, inputPath ) ),
+                                                len( fileList ),
+                                                state, fullOutput ) )
+
 def cores():
-    return int( re.findall( r"processor\s*:\s*(\d+)", open( "/proc/cpuinfo" ).read() )[ -1 ] ) + 1
+    return multiprocessing.cpu_count();
 
 def voodooFilesInList( fileList ):
     if args.concurrent:

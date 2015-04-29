@@ -1,3 +1,9 @@
+ifdef SystemRoot
+#SHELL
+else
+SHELL := /bin/bash
+endif
+
 all: all-targets
 
 ifeq ($(V),1)
@@ -15,7 +21,6 @@ mapexample_LIBRARIES = -lpthread
 #Namespace_object2_o_CFLAGS = -fPIC -DPIC
 
 CONFIGURATION ?= DEBUG
-SHELL := /bin/bash
 COMMON_CXXFLAGS = -Ic -Icpp -I/usr/include/python2.7 -std=gnu++0x -Werror -Wall
 DEBUG_CXXFLAGS = -ggdb -DDEBUG
 RELEASE_CXXFLAGS = -O3
@@ -25,4 +30,5 @@ RELEASE_CFLAGS = $(RELEASE_CXXFLAGS)
 CXXFLAGS = $(COMMON_CXXFLAGS) $($(CONFIGURATION)_CXXFLAGS)
 CFLAGS = $(COMMON_CFLAGS) $($(CONFIGURATION)_CFLAGS)
 
+include $(VOODOO_ROOT_DIR)/make/common.Makefile
 include tools/make/rules.Makefile

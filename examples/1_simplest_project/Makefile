@@ -1,6 +1,9 @@
+export ENFORCE_COVERAGE_FIND_ROOT_CPP = .
+include $(VOODOO_ROOT_DIR)/make/common.Makefile
+
 all: test
 
-export VOODOO_ROOT_DIR = ../..
+#export VOODOO_ROOT_DIR = ../..
 
 clean:
 	rm -fr build_unittest build
@@ -14,5 +17,5 @@ test: buildall
 buildall: build/main
 
 build/main: main.cpp File.h Map.h
-	-mkdir $(@D)
-	g++ -o $@ $< -Wall
+	@$(call MKDIR,$(@D))
+	@g++ -o $@ $< -Wall

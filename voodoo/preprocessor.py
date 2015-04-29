@@ -73,6 +73,9 @@ class Preprocessor:
 		return '\n#endif // __VOODOO_MULTIINCLUDE_PREVENTER_%s__\n' % (
 								self._filenameIdentifier )
 
+	def headerOfHeader( self ):
+		return	( '#include "%s"\n' ) % (	self._pathToOriginal )
+
 	def header( self ):
 		return	(	'%s' +
 					'\n' +
