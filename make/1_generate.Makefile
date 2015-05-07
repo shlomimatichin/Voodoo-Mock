@@ -3,7 +3,7 @@ generateTests: generateCxxtest generateVoodoo
 include $(VOODOO_ROOT_DIR)/make/common.Makefile
 
 VOODOO_SCAN_HEADERS_ROOTS ?= .
-VOODOO_MULTI_EXCLUDES ?= "\btests/"
+VOODOO_MULTI_EXCLUDES ?= "\btests\b"
 VOODOO_FLAGS ?= --define=DEBUG --define=BOOST_ASIO_HAS_MOVE
 VOODOO_EXTERNALS_FLAGS ?=
 VOODOO_INCLUDES ?= --includePath=.

@@ -4,6 +4,7 @@ import os
 import stat
 import re
 import voodoo
+import multiprocessing
 import preprocessor
 import argparse
 import traceback
@@ -107,7 +108,7 @@ def voodooOneFile( fullName, inputPath, fileList ):
                                                 state, fullOutput ) )
 
 def cores():
-    return int( re.findall( r"processor\s*:\s*(\d+)", open( "/proc/cpuinfo" ).read() )[ -1 ] ) + 1
+    return multiprocessing.cpu_count();
 
 def voodooFilesInList( fileList ):
     if args.concurrent:
