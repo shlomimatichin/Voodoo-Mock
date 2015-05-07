@@ -1,7 +1,7 @@
 #ifndef __CXXTEST_PRINT_STACK_H__
 #define __CXXTEST_PRINT_STACK_H__
 
-#if ( __GNUG__ )
+#if !defined(_WIN32) && defined( __GNUG__ )
 
 #include <stdio.h>
 #include <stdlib.h>

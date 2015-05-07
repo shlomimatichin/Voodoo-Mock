@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#ifdef __GNUC__
+#if !defined(_WIN32) && defined( __GNUG__ )
 
 #include <execinfo.h>
 
