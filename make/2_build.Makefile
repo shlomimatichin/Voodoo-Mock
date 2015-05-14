@@ -5,7 +5,7 @@ include $(VOODOO_ROOT_DIR)/make/common.Makefile
 UNITTEST_CXXFLAGS ?= -DDEBUG -DUNITTEST
 UNITTEST_INCLUDES ?= -I.
 UNITTEST_LDFLAGS ?=
-ifdef SYSTEMROOT
+ifeq ($(OS),Windows_NT)
 UNITTEST_LIBS ?=
 else
 UNITTEST_LIBS ?= -ldl

@@ -4,7 +4,7 @@ CXXTEST_FIND_PATTERN ?= $(CXXTEST_FIND_ROOT) -name 'Test_*.h'
 PYTEST_FIND_ROOT ?=
 PYTEST_FIND_PATTERN ?= $(PYTEST_FIND_ROOT) -name 'test_*.py'
 ENFORCE_COVERAGE_FIND_ROOT_CPP ?=
-ifdef SYSTEMROOT
+ifeq ($(OS),Windows_NT)
 #on windows we need the double-escape, 
 ENFORCE_COVERAGE_FIND_EXCLUDE_REGEXES ?= '.*\\<$(UNITTEST_BUILD_DIRECTORY)\\>/.*' '.*\\<tests\\>.*' '.*\\<build\\>.*'
 else

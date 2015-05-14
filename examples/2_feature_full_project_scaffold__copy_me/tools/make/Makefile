@@ -7,7 +7,7 @@ else
 endif
 
 TARGET_mapexample = cpp/MapExample/main.cpp
-ifdef SYSTEMROOT
+ifeq ($(OS),Windows_NT)
 mapexample_LIBRARIES =
 else 
 mapexample_LIBRARIES = -lpthread
