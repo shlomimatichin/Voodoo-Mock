@@ -14,7 +14,7 @@ export VOODOO_INCLUDES = --includePath=cpp --includePath=c
 
 clean: clean_unittest
 	rm -fr build
-	find -name "*.pyc" -delete
+	find -name "*.pyc" -exec rm {} \;
 
 test: targets
 

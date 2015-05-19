@@ -2,14 +2,15 @@
 #run vim and work under this environment
 
 mydir=`dirname $BASH_SOURCE`
-mydir=`realpath $mydir`
+#mydir=`realpath $mydir`
 if [ ! -z "$TOP" -a "$TOP" != "$mydir" ] ; then
     echo "Error: Nested env"
     exit -1
 fi
 
 export TOP=$mydir
-export VOODOO_ROOT_DIR=`realpath ../..`
+#export VOODOO_ROOT_DIR=`realpath ../..`
+export VOODOO_ROOT_DIR=$mydir/../..
 export VIMINIT="source $TOP/tools/vim/settings.vim"
 export PYTHONPATH=$PYTHONPATH:$TOP/py
 
