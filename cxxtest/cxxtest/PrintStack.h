@@ -91,15 +91,14 @@ static inline void printTrace()
     char output_name[128];
     strcpy(output_name, "/tmp/stacktrace.XXXXXX");
     int result = mkstemp(output_name);
-    if (result != 0) {
+    if (result < 0) {
         printf( "Unable to show stack trace, mkstemp failed %d\n", result );
         return;
     }
     int child_pid = fork();
     if (!child_pid) {           
-        int output = open( output_name, O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR );
-        dup2( output, 1 );
-        dup2( output, 2 );
+        dup2(result, 1);
+        dup2(result, 2);
         execlp("gdb", "gdb", "--batch", "-n", "-ex", "thread", "-ex", "bt", name_buf, pid_buf, NULL);
         abort(); /* If gdb failed to start */
     } else {
@@ -108,6 +107,7 @@ static inline void printTrace()
         _StackFormatter formatter(output_name);
         printf( "Stack trace:\n%s\n", formatter.output().c_str() );
     }
+    close(result);
     unlink( output_name );
 }
 
