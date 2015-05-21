@@ -9,16 +9,10 @@ class TestCPPParsing( unittest.TestCase ):
     def setUp( self ):
         self.maxDiff = None
 
-    def _gccCPPIncludeDir( self ):
-        if not hasattr( self, '_gccCPPIncludeDirCache' ):
-            stdarg = subprocess.check_output( "find /usr/lib/gcc -name stdarg.h", shell = True, stderr = subprocess.STDOUT ).strip()
-            self._gccCPPIncludeDirCache = os.path.dirname( stdarg )
-        return self._gccCPPIncludeDirCache
-
     def _simpleTest( self, contents, expected ):
         tested = savingiterator.SavingIterator()
         with tools.temporaryFile( contents ) as contentsFile:
-            tested.process( contentsFile, includes = [ self._gccCPPIncludeDir() ] )
+            tested.process( contentsFile )
         if tested.saved != expected:
             pprint.pprint( tested.saved )
             pprint.pprint( expected )
@@ -29,7 +23,7 @@ class TestCPPParsing( unittest.TestCase ):
         with tools.temporaryFile( headersContents ) as headersContentsFile:
             fullContents = ( '#include "%s"\n' % headersContentsFile ) + contents
             with tools.temporaryFile( fullContents ) as contentsFile:
-                tested.process( contentsFile, includes = [ self._gccCPPIncludeDir() ] )
+                tested.process( contentsFile )
         if tested.saved != expected:
             pprint.pprint( tested.saved )
             pprint.pprint( expected )
