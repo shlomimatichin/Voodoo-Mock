@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/vf533umpc9rodgwj?svg=true)](https://ci.appveyor.com/project/ShlomiMatichin/voodoo-mock)
+[![wercker status](https://app.wercker.com/status/6319d5b975f2523fdd6baa807c13a91a/m "wercker status")](https://app.wercker.com/project/bykey/6319d5b975f2523fdd6baa807c13a91a)
 
 Voodoo-Mock is a framework for `mock objects' based unit testing in C++.
 Written in python (wrapping over CLang by LLVM project), Voodoo-Mock
