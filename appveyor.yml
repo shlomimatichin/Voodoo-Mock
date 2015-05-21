@@ -37,7 +37,7 @@ install:
 build_script:
   
   # set env
-  - cmd: set VOODOO_ROOT_DIR=c:\projects\Voodoo-Mock
+#  - cmd: set VOODOO_ROOT_DIR=c:\projects\Voodoo-Mock
 #  - cmd: set PYTHONPATH=c:\projects\Voodoo-Mock\voodoo
 
   #build / test Voodoo-Mock

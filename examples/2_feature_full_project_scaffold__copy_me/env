@@ -14,7 +14,7 @@ export TOP=$mydir
 unset mydir
 # the next line is a cross platform version of
 # export VOODOO_ROOT_DIR=`realpath ../..`
-export VOODOO_ROOT_DIR=`python -c "import os; print os.path.abspath('$TOP/../..')"`
+export VOODOO_ROOT_DIR=`python -c "import os; print os.path.abspath(os.path.join(r'$TOP', '..', '..'))"`
 export VIMINIT="source $TOP/tools/vim/settings.vim"
 export PYTHONPATH=$PYTHONPATH:$TOP/py
 
