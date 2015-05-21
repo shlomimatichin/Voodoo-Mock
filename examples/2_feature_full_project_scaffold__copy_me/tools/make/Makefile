@@ -7,7 +7,9 @@ else
 endif
 
 TARGET_mapexample = cpp/MapExample/main.cpp
+ifneq ($(OS),Windows_NT)
 mapexample_LIBRARIES = -lpthread
+endif
 
 #SHAREDLIBRARY_example = cpp/Namespace/object1.cpp cpp/Namespace/object2.cpp
 #example_LIBRARIES = -ldl -lrt
