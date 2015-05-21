@@ -1,15 +1,20 @@
 #!/bin/bash
 #run vim and work under this environment
 
-mydir=`dirname $BASH_SOURCE`
-mydir=`realpath $mydir`
+export mydir=`dirname $BASH_SOURCE`
+# the next line is a cross platform version of
+# mydir=`realpath $mydir`
+mydir=`python -c "import os; print os.path.abspath('$mydir')"`
 if [ ! -z "$TOP" -a "$TOP" != "$mydir" ] ; then
     echo "Error: Nested env"
     exit -1
 fi
 
 export TOP=$mydir
-export VOODOO_ROOT_DIR=`realpath ../..`
+unset mydir
+# the next line is a cross platform version of
+# export VOODOO_ROOT_DIR=`realpath ../..`
+export VOODOO_ROOT_DIR=`python -c "import os; print os.path.abspath('$TOP/../..')"`
 export VIMINIT="source $TOP/tools/vim/settings.vim"
 export PYTHONPATH=$PYTHONPATH:$TOP/py
 
