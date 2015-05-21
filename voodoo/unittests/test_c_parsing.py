@@ -237,11 +237,11 @@ extern void dev_put(struct net_device *dev);
         self.assertEquals( tested.saved, expected )
 
     def test_BugfixTypedef1( self ):
-        self._simpleTest( "typedef unsigned long size_t; size_t defunc();", [
-            dict( callbackName = "typedef", name = "size_t", text = "typedef unsigned long size_t" ),
-            dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "defunc", text = "size_t defunc",
-                returnRValue = False, returnType = "size_t", static = True, parameters = [], const = False, virtual = False ),
-        ] )
+        self._simpleTest( "typedef unsigned long a_size_t; a_size_t defunc();", [
+            dict( callbackName = "typedef", name = "a_size_t", text = "typedef unsigned long a_size_t" ),
+            dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "defunc", text = "a_size_t defunc",
+                returnRValue = False, returnType = "a_size_t", static = True, parameters = [], const = False, virtual = False ),
+         ] )
 
     def test_StaticVariableShouldNotRemainStaticToAvoidCompilationError( self ):
         self._simpleTest( "static int i;", [
