@@ -15,8 +15,6 @@ typedef int __v4si __attribute__ ((__vector_size__ (16)));
 
 
 int __builtin_ia32_bsrsi( int ) { return 0; }
-int __builtin_ia32_rdpmc( int ) { return 0; }
-unsigned long long __builtin_ia32_rdtsc() { return 0; }
 unsigned long long __builtin_ia32_rdtscp( void * ) { return 0; }
 unsigned char __builtin_ia32_rolqi(unsigned char __X, int __C) { return '\0'; }
 unsigned short __builtin_ia32_rolhi (unsigned short __X, int __C) { return 0; }
@@ -26,14 +24,6 @@ unsigned short __builtin_ia32_rorhi(unsigned short __X, int __C) { return 0; }
 void __builtin_ia32_pause( void ) {}
 int __builtin_ia32_bsrdi( long long ) { return 0; }
 __m128 __builtin_ia32_addss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpeqss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpless( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpltss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpneqss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpnless( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpnltss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpordss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpunordss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_cvtsi2ss( __v4sf, int ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_cvtsi642ss( __v4sf, long long ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_divss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
@@ -46,18 +36,10 @@ __m128 __builtin_ia32_subss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0
 __m128 __builtin_ia32_addps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_andnps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_andps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpeqps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_cmpgeps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_cmpgtps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpleps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpltps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpneqps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_cmpngeps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_cmpngtps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpnleps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpnltps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpordps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
-__m128 __builtin_ia32_cmpunordps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_cvtpi2ps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_divps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
 __m128 __builtin_ia32_loadhps( __v4sf, const __v2sf * ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
@@ -105,26 +87,10 @@ __m128d __builtin_ia32_andnsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; 
 __m128d __builtin_ia32_orpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
 __m128d __builtin_ia32_orsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
 __m128d __builtin_ia32_xorpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpltpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpunordsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpnltpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpnlesd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
 __m128d __builtin_ia32_cmpgtpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpneqsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpordpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
 __m128d __builtin_ia32_cmpngtpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
 __m128d __builtin_ia32_cmpgepd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpneqpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpordsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpeqpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
 __m128d __builtin_ia32_cmpngepd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpnlepd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmplepd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpnltsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpeqsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmplesd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpltsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
-__m128d __builtin_ia32_cmpunordpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
 __m128i __builtin_ia32_loaddqu( char const * ) { return (__m128i){ 0, 0 }; }
 __m128i __builtin_ia32_movq128( __v2di ) { return (__m128i){ 0, 0 }; }
 int __builtin_ia32_cvttsd2si( __v2df ) { return 0; }
@@ -165,8 +131,46 @@ __m128i __builtin_ia32_pcmpeqd128 ( __v4si, __v4si ) { return (__m128i){ 0, 0 };
 __m128i __builtin_ia32_pcmpgtb128 ( __v16qi, __v16qi ) { return (__m128i){ 0, 0 }; }
 __m128i __builtin_ia32_pcmpgtw128 ( __v8hi, __v8hi ) { return (__m128i){ 0, 0 }; }
 __m128i __builtin_ia32_pcmpgtd128 ( __v4si, __v4si ) { return (__m128i){ 0, 0 }; }
-unsigned char __builtin_ia32_addcarryx_u32( unsigned char, unsigned int, unsigned int, unsigned int * ) { return '\0'; }
 unsigned char __builtin_ia32_addcarryx_u64( unsigned char, unsigned long, unsigned long, unsigned long long * ) { return '\0'; }
+
+#if !defined(_WIN32)
+int __builtin_ia32_rdpmc( int ) { return 0; }
+unsigned long long __builtin_ia32_rdtsc() { return 0; }
+
+__m128 __builtin_ia32_cmpeqss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpless( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpltss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpneqss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpnless( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpnltss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpordss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpunordss( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpeqps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpleps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpltps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpneqps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpnleps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpnltps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpordps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128 __builtin_ia32_cmpunordps( __v4sf, __v4sf ) { return (__m128){ 0.0f, 0.0f, 0.0f, 0.0f }; }
+__m128d __builtin_ia32_cmpltpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpunordsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpnltpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpnlesd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpneqsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpordpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpneqpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpordsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpeqpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpnlepd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmplepd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpnltsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpeqsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmplesd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpltsd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+__m128d __builtin_ia32_cmpunordpd( __v2df, __v2df ) { return (__m128d){ 0.0, 0.0 }; }
+unsigned char __builtin_ia32_addcarryx_u32( unsigned char, unsigned int, unsigned int, unsigned int * ) { return '\0'; }
+#endif
 
 #include <errno.h>
 #include <string.h>
