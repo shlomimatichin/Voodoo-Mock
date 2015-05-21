@@ -14,8 +14,8 @@ class EnforceCPPCoverage:
     _NON_CODE_REGEX = re.compile( r"^\s*-:\s*(\d+):" )
 
     def __init__( self, filesToCover, unitTestExecutables ):
-        self._filesToCover = set( filesToCover )
-        self._filesWithoutCoverageReport = set( filesToCover )
+        self._filesToCover = set( [ os.path.normpath( f ) for f in filesToCover ] )
+        self._filesWithoutCoverageReport = set( self._filesToCover )
         self._init()
 
         try:
