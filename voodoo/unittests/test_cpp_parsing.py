@@ -275,6 +275,28 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
+    def test_MethodDeclerationBeforeDtor_Bugfix( self ):
+        self._simpleTest( "class File { public: File & operator=( File && rhs ); ~File(); };", [
+            dict( callbackName = "enterClass", name = "File", inheritance = [], templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classFile{public:File&operator=(File&&rhs);~File();}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "method", templatePrefix = "", name = "operator=", text = "operator=",
+                returnRValue = False, returnType = "File &", static = False, virtual = False, const = False, parameters = [
+                    dict( name = "rhs", text = "File && rhs", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_MethodDefinitionBeforeDtor_Bugfix( self ):
+        self._simpleTest( "class File { public: File & operator=( File && rhs ) { return *this; } ~File() {} };", [
+            dict( callbackName = "enterClass", name = "File", inheritance = [], templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classFile{public:File&operator=(File&&rhs){return*this;}~File(){}}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "method", templatePrefix = "", name = "operator=", text = "operator=",
+                returnRValue = False, returnType = "File &", static = False, virtual = False, const = False, parameters = [
+                    dict( name = "rhs", text = "File && rhs", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
     def test_Bugfix_ExplicilyRemoveCommentTokens( self ):
         self._simpleTest( "void /*hello*/ func() /* bye */ {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "void func",

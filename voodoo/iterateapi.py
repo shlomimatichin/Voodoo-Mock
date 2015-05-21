@@ -341,7 +341,8 @@ class IterateAPI:
         if len( tokens ) > 0 and tokens[ -1 ].spelling == terminatorCharacter:
             del tokens[ -1 ]
         if removeOneNonPunctuationTokenFromTheEnd:
-            if len( tokens ) > 0 and tokens[ -1 ].kind != cindex.TokenKind.PUNCTUATION:
+            if len( tokens ) > 0 and \
+                    ( tokens[ -1 ].kind != cindex.TokenKind.PUNCTUATION or tokens[ -1 ].spelling == '~' ):
                 if len( tokens ) >= 2 and tokens[ -2 ].spelling == '=' and \
                         tokens[ -1 ].spelling in [ '0' ]:
                     tokens.pop()
