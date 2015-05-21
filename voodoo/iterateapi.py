@@ -110,7 +110,7 @@ class IterateAPI:
                                                         parameters = parameters,
                                                         returnType = returnType,
                                                         returnRValue = self.__returnRValue( node.result_type ),
-                                                        static = True,
+                                                        static = node.is_static_method(),
                                                         const = False )
             self.functionForwardDeclaration( decomposition = decomposition )
         elif ( node.kind == cindex.CursorKind.FUNCTION_DECL and node.is_definition() or
@@ -125,7 +125,7 @@ class IterateAPI:
                                                                 parameters = parameters,
                                                                 returnType = returnType,
                                                                 returnRValue = self.__returnRValue( node.result_type ),
-                                                                static = True,
+                                                                static = node.is_static_method(),
                                                                 const = False )
             self.functionDefinition( decomposition = decomposition )
         elif ( node.kind == cindex.CursorKind.CONSTRUCTOR or

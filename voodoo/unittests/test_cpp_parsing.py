@@ -176,7 +176,7 @@ class TestCPPParsing( unittest.TestCase ):
     def test_functionReturningStdString( self ):
         self._simpleTest( "#include <string>\nstd::string theString();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "theString", text = "std :: string theString",
-                returnRValue = True, returnType = "std :: string", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = True, returnType = "std :: string", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ClassInheritance( self ):
@@ -206,7 +206,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "Result & getResult",
-                returnRValue = False, returnType = "Result &", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "Result &", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ConstLValueReference( self ):
@@ -216,7 +216,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "const Result & getResult",
-                returnRValue = False, returnType = "const Result &", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "const Result &", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturningPointer( self ):
@@ -226,20 +226,20 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "Result * getResult",
-                returnRValue = False, returnType = "Result *", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "Result *", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturnTypeIsSharedPtr( self ):
         self._testWithHeaders( "template < typename T > class sharedptr {};", "sharedptr< int > func();", [
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "func", text = "sharedptr < int > func",
-                returnRValue = True, returnType = "sharedptr < int >", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = True, returnType = "sharedptr < int >", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturnTypeIsSharedPtr_FunctionDefinition( self ):
         self._testWithHeaders( "template < typename T > class sharedptr {};",
                                 "sharedptr< int > func() { return sharedptr< int >(); }", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "sharedptr < int > func",
-                returnRValue = True, returnType = "sharedptr < int >", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = True, returnType = "sharedptr < int >", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ReturnTypeIsSharedPtr_Method( self ):
@@ -278,15 +278,15 @@ class TestCPPParsing( unittest.TestCase ):
     def test_Bugfix_ExplicilyRemoveCommentTokens( self ):
         self._simpleTest( "void /*hello*/ func() /* bye */ {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "void func",
-                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_Bugfix_TrailingStaticKeywordInFunctionDefinition( self ):
         self._simpleTest( "void func() {} static void func2() {}", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "void func",
-                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func2", text = "void func2",
-                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_Bugfix_PureVirtualNotParsedCorrectly( self ):
@@ -326,9 +326,9 @@ class TestCPPParsing( unittest.TestCase ):
         self._simpleTest( "int f() noexcept { return 0; } int g() noexcept;"
                 "class A { public: A() noexcept; ~A() noexcept; void method() noexcept;};", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "f", text = "int f",
-                returnRValue = False, returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "g", text = "int g",
-                returnRValue = False, returnType = "int", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
             dict( callbackName = "enterClass", name = "A", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classA{public:A()noexcept;~A()noexcept;voidmethod()noexcept;}" ),
             dict( callbackName = "accessSpec", access = "public" ),
@@ -343,7 +343,7 @@ class TestCPPParsing( unittest.TestCase ):
         self._simpleTest( 'extern "C" { int a; }\nextern "C" void f();', [
             dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "f", text = "void f",
-                returnRValue = False, returnType = "void", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
     def test_ExplicitConversionOperator( self ):
@@ -457,7 +457,7 @@ class TestCPPParsing( unittest.TestCase ):
                 "return std::move( res );}\n", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func",
                 text = "std :: unique_ptr < int > func",
-                returnType = "std :: unique_ptr < int >", static = True, virtual = False,
+                returnType = "std :: unique_ptr < int >", static = False, virtual = False,
                 returnRValue = True,
                 const = False, parameters = [] ),
         ] )
@@ -471,7 +471,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = 'typedef', name = 'UniqueInt', text = 'typedef std :: unique_ptr < int > UniqueInt' ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func",
                 text = "UniqueInt func",
-                returnType = "UniqueInt", static = True, virtual = False,
+                returnType = "UniqueInt", static = False, virtual = False,
                 returnRValue = True,
                 const = False, parameters = [] ),
         ] )
@@ -491,7 +491,7 @@ class TestCPPParsing( unittest.TestCase ):
     def test_templateFunction( self ):
         self._simpleTest( "template< typename T > int func(); ", [
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "template < typename T > int func",
-                returnRValue = False, returnType = "template < typename T > int", static = True, virtual = False, const = False, parameters = [] ),
+                returnRValue = False, returnType = "template < typename T > int", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
 if __name__ == '__main__':
