@@ -9,7 +9,7 @@ _cachedGCCIncludePath = None
 def gccIncludePath():
     global _cachedGCCIncludePath
     if _cachedGCCIncludePath is None:
-        with open( "/dev/null", "r" ) as noInput:
+        with open( os.devnull, "r" ) as noInput:
             output = subprocess.check_output( [ "cpp", "-Wp,-v" ], stderr = subprocess.STDOUT, stdin = noInput )
-            _cachedGCCIncludePath = re.findall( r"\n (/\S+)", output )
+            _cachedGCCIncludePath = re.findall( r"\n ([/\\]\S+)", output )
     return _cachedGCCIncludePath

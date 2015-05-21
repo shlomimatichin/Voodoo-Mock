@@ -1,6 +1,6 @@
 import unittest
 import savingiterator
-import tempfile
+import tools
 import pprint
 import subprocess
 import os
@@ -8,12 +8,6 @@ import os
 class TestCPPParsing( unittest.TestCase ):
     def setUp( self ):
         self.maxDiff = None
-
-    def _tempfile( self, contents ):
-        t = tempfile.NamedTemporaryFile( suffix = ".h" )
-        t.write( contents )
-        t.flush()
-        return t
 
     def _gccCPPIncludeDir( self ):
         if not hasattr( self, '_gccCPPIncludeDirCache' ):
@@ -23,8 +17,8 @@ class TestCPPParsing( unittest.TestCase ):
 
     def _simpleTest( self, contents, expected ):
         tested = savingiterator.SavingIterator()
-        contentsFile = self._tempfile( contents )
-        tested.process( contentsFile.name, includes = [ self._gccCPPIncludeDir() ] )
+        with tools.temporaryFile( contents ) as contentsFile:
+            tested.process( contentsFile, includes = [ self._gccCPPIncludeDir() ] )
         if tested.saved != expected:
             pprint.pprint( tested.saved )
             pprint.pprint( expected )
@@ -32,9 +26,10 @@ class TestCPPParsing( unittest.TestCase ):
 
     def _testWithHeaders( self, headersContents, contents, expected ):
         tested = savingiterator.SavingIterator()
-        headersContentsFile = self._tempfile( headersContents )
-        contentsFile = self._tempfile( ( '#include "%s"\n' % headersContentsFile.name ) + contents )
-        tested.process( contentsFile.name, includes = [ self._gccCPPIncludeDir() ] )
+        with tools.temporaryFile( headersContents ) as headersContentsFile:
+            fullContents = ( '#include "%s"\n' % headersContentsFile ) + contents
+            with tools.temporaryFile( fullContents ) as contentsFile:
+                tested.process( contentsFile, includes = [ self._gccCPPIncludeDir() ] )
         if tested.saved != expected:
             pprint.pprint( tested.saved )
             pprint.pprint( expected )

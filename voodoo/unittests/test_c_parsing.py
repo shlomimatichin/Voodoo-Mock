@@ -1,22 +1,16 @@
 import unittest
 import savingiterator
-import tempfile
 import pprint
+import tools
 
 class TestCParsing( unittest.TestCase ):
     def setUp( self ):
         self.maxDiff = None
 
-    def _tempfile( self, contents ):
-        t = tempfile.NamedTemporaryFile( suffix = ".h" )
-        t.write( contents )
-        t.flush()
-        return t
-
     def _simpleTest( self, contents, expected ):
         tested = savingiterator.SavingIterator()
-        contentsFile = self._tempfile( contents )
-        tested.process( contentsFile.name )
+        with tools.temporaryFile( contents ) as contentsFile:
+            tested.process( contentsFile )
         if tested.saved != expected:
             pprint.pprint( tested.saved )
             pprint.pprint( expected )
@@ -182,22 +176,23 @@ class TestCParsing( unittest.TestCase ):
     def _parseError( self, contents ):
         tested = savingiterator.SavingIterator()
         tested.printErrors = False
-        contentsFile = self._tempfile( contents )
-        try:
-            tested.process( contentsFile.name )
-        except:
-            return
-        else:
-            raise Exception( "Expected parsing to fail" )
+        with tools.temporaryFile( contents ) as contentsFile:
+            try:
+                tested.process( contentsFile )
+            except:
+                return
+            else:
+                raise Exception( "Expected parsing to fail" )
 
     def test_unknownType( self ):
         self._parseError( "Int i;" )
 
     def _testInclude( self, contents1, contents2, expected ):
         tested = savingiterator.SavingIterator()
-        contentsFile1 = self._tempfile( contents1 )
-        contentsFile2 = self._tempfile( '#include "%s"\n%s' % ( contentsFile1.name, contents2 ) )
-        tested.process( contentsFile2.name )
+        with tools.temporaryFile( contents1 ) as contentsFile1:
+            contents2 = '#include "%s"\n%s' % ( contentsFile1, contents2 )
+            with tools.temporaryFile( contents2 ) as contentsFile2:
+                tested.process( contentsFile2 )
         if tested.saved != expected:
             pprint.pprint( tested.saved )
             pprint.pprint( expected )
@@ -233,8 +228,8 @@ extern void dev_put(struct net_device *dev);
     def test_defines( self ):
         contents = "DEFINESTRUCT name_of_struct;"
         tested = savingiterator.SavingIterator()
-        contentsFile = self._tempfile( contents )
-        tested.process( contentsFile.name, defines = [ "DEFINESTRUCT=struct" ] )
+        with tools.temporaryFile( contents ) as contentsFile:
+            tested.process( contentsFile, defines = [ "DEFINESTRUCT=struct" ] )
         expected = [ dict( callbackName = "structForwardDeclaration", name = "name_of_struct" ) ]
         if tested.saved != expected:
             pprint.pprint( tested.saved )
