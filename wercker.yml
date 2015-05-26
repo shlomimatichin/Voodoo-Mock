@@ -1,0 +1,26 @@
+box: invalidname/cpp11@0.0.3
+build:
+  steps:
+    - pip-install
+
+    - script:
+        name: Setup gcov
+        code: |
+            sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 99
+
+    - script:
+        name: Output versions
+        code: |
+            echo "python version $(python --version)"
+            echo "g++ version $(g++ -v)"
+            echo "gcov version $(gcov -v)"
+
+    - script:
+        name: Voodoo unittest
+        code: |
+            make unittest
+
+    - script:
+        name: Voodoo examples
+        code: |
+            make build

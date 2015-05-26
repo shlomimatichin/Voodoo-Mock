@@ -21,7 +21,8 @@ class TestCParsing( unittest.TestCase ):
 
     def test_emptyStructDefinition( self ):
         self._simpleTest( "struct name_of_struct {};", [
-            dict( callbackName = "enterStruct", name = "name_of_struct", fullTextNaked = "structname_of_struct{}", inheritance = [] ),
+            dict( callbackName = "enterStruct", name = "name_of_struct", fullTextNaked = "structname_of_struct{}", inheritance = [],
+                templatePrefix = "", templateParametersList = None ),
             dict( callbackName = "leaveStruct" ),
         ] )
 
@@ -144,7 +145,8 @@ class TestCParsing( unittest.TestCase ):
 
     def test_nonEmptyStructDefinition( self ):
         self._simpleTest( "struct name_of_struct { int a; const char * b; };", [
-            dict( callbackName = "enterStruct", name = "name_of_struct", inheritance = [], fullTextNaked = "structname_of_struct{inta;constchar*b;}" ),
+            dict( callbackName = "enterStruct", name = "name_of_struct", inheritance = [], fullTextNaked = "structname_of_struct{inta;constchar*b;}",
+                templatePrefix = "", templateParametersList = None ),
             dict( callbackName = "fieldDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "fieldDeclaration", name = "b", text = "const char * b" ),
             dict( callbackName = "leaveStruct" ),
@@ -160,7 +162,8 @@ class TestCParsing( unittest.TestCase ):
 
     def test_nonEmptyStructTypdefDefinition( self ):
         self._simpleTest( "typedef struct name_of_struct { int a; const char * b; } struct_t;", [
-            dict( callbackName = "enterStruct", name = "name_of_struct", inheritance = [], fullTextNaked = "structname_of_struct{inta;constchar*b;}" ),
+            dict( callbackName = "enterStruct", name = "name_of_struct", inheritance = [], fullTextNaked = "structname_of_struct{inta;constchar*b;}",
+                templatePrefix = "", templateParametersList = None ),
             dict( callbackName = "fieldDeclaration", name = "a", text = "int a" ),
             dict( callbackName = "fieldDeclaration", name = "b", text = "const char * b" ),
             dict( callbackName = "leaveStruct" ),
@@ -211,9 +214,11 @@ extern struct net init_net;
 extern struct net_device * dev_get_by_name(struct net *net, const char *name);
 extern void dev_put(struct net_device *dev);
         """, [
-            dict( callbackName = "enterStruct", name = 'net_device', inheritance = [], fullTextNaked = "structnet_device{}" ),
+            dict( callbackName = "enterStruct", name = 'net_device', inheritance = [], fullTextNaked = "structnet_device{}",
+                templatePrefix = "", templateParametersList = None ),
             dict( callbackName = "leaveStruct" ),
-            dict( callbackName = "enterStruct", name = 'net', inheritance = [], fullTextNaked = "structnet{}" ),
+            dict( callbackName = "enterStruct", name = 'net', inheritance = [], fullTextNaked = "structnet{}",
+                templatePrefix = "", templateParametersList = None ),
             dict( callbackName = "leaveStruct" ),
             dict( callbackName = "variableDeclaration", name = "init_net", text = "extern struct net init_net" ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "dev_get_by_name", text = "struct net_device * dev_get_by_name",
@@ -221,7 +226,7 @@ extern void dev_put(struct net_device *dev);
                 dict( name = "net", text = "struct net * net", isParameterPack = False ),
                 dict( name = "name", text = "const char * name", isParameterPack = False ) ] ),
             dict( callbackName = 'functionForwardDeclaration', name = 'dev_put',
-		    parameters = [ dict( name = 'dev', text = 'struct net_device * dev', isParameterPack = False ) ],
+            parameters = [ dict( name = 'dev', text = 'struct net_device * dev', isParameterPack = False ) ],
                   returnRValue = False, returnType = 'void', static = False, templatePrefix = '', text = 'void dev_put', const = False, virtual = False )
         ] )
 
@@ -268,7 +273,8 @@ extern void dev_put(struct net_device *dev);
 
     def test_anonymousUnionMember( self ):
         self._simpleTest( "struct a { union { int b; int c; } d; };", [
-            dict( callbackName = "enterStruct", name = "a", fullTextNaked = "structa{union{intb;intc;}d;}", inheritance = [] ),
+            dict( callbackName = "enterStruct", name = "a", fullTextNaked = "structa{union{intb;intc;}d;}", inheritance = [],
+                templatePrefix = "", templateParametersList = None ),
             dict( callbackName = "fieldDeclaration", name = "d", text = "union { int b ; int c ; } d" ),
             dict( callbackName = "leaveStruct" ),
         ] )
