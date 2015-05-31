@@ -27,7 +27,7 @@ install:
   - ps: cd "c:\"
   - cmd: wget "http://sourceforge.net/projects/mingw-w64/files/latest/download?source=typ_redirect" -O gcc-4.8-win32_4.8.5-20150504.7z
   - cmd: 7z x gcc-4.8-win32_4.8.5-20150504.7z
-  - ps: $env:PATH = 'c:\gcc-4.8-win32\bin;c:\gcc-4.8-win32\i686-w64-mingw32\bin;' + $env:PATH
+  - ps: $env:PATH = 'c:\mingw32\bin;c:\mingw32\i686-w64-mingw32\bin;' + $env:PATH
 
   #python modules
   - cmd: C:\Python27\scripts\pip install futures
