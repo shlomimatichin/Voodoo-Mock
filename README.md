@@ -22,7 +22,7 @@ Features:
    - attached makefiles fit most linux projects
    - include coverage-not-degraded enforcement tool
    - include awesome VIM integration utilitys - quicken your cycle.
-4. Voodoo-mock now supports C++0x11 parsing using CLang
+4. Voodoo-mock now supports C++14 parsing using CLang
 
 More than 10000 unit tests were already written using the
 different versions of Voodoo-mock. Projects using it include windows
