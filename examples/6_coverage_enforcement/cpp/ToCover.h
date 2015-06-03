@@ -3,6 +3,7 @@
 
 #include "SemiCoveredExemptFile.h"
 #include <stdexcept>
+#include <stdio.h>
 
 void throwExceptionFunction()
 {

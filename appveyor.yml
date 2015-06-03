@@ -2,14 +2,10 @@ shallow_clone: true
 clone_folder: c:\projects\Voodoo-Mock
 
 install:
-  #patch so that the path to git and it's msys does'nt countains spaces...
-  - ps: >-
-      if($true)
-      {
-        $fso = New-Object -ComObject Scripting.FileSystemObject
-        $env:PATH = $fso.getfolder("C:\Program Files (x86)\Git\cmd").ShortPath + ";" + $env:PATH
-        $env:PATH = $fso.getfolder("C:\Program Files (x86)\Git\bin").ShortPath + ";" + $env:PATH
-      }
+  #let's use the pre-installed mingw
+  - ps: $env:PATH = 'C:\MinGW\bin;C:\MinGW\mingw32\bin;C:\MinGW\msys\1.0\bin;' + $env:PATH
+  #we copy mingw32-make to have a "make" executable
+  - cmd: copy c:\MinGW\bin\mingw32-make.exe c:\MinGW\bin\make.exe
 
   #needed to download other deps
   - cinst wget
@@ -23,24 +19,15 @@ install:
   - cmd: move LLVM-3.6.0 c:\
   - ps: $env:PATH = 'c:\LLVM-3.6.0\bin;' + $env:PATH
 
-  #let's try using mingw-w64
-  - ps: cd "c:\"
-  - cmd: wget "http://sourceforge.net/projects/mingw-w64/files/latest/download?source=typ_redirect" -O gcc-4.8-win32_4.8.5-20150504.7z
-  - cmd: 7z x gcc-4.8-win32_4.8.5-20150504.7z
-  - ps: $env:PATH = 'c:\mingw32\bin;c:\mingw32\i686-w64-mingw32\bin;' + $env:PATH
-  - cmd: copy c:\mingw32\bin\mingw32-make.exe c:\mingw32\bin\make.exe
-
   #python modules
   - cmd: C:\Python27\scripts\pip install futures
   - cmd: C:\Python27\scripts\pip install clang==3.5
   - ps: $env:PATH = 'c:\Python27\Lib\site-packages;' + $env:PATH
 
 build_script:
-  
-  # set env
-#  - cmd: set VOODOO_ROOT_DIR=c:\projects\Voodoo-Mock
-#  - cmd: set PYTHONPATH=c:\projects\Voodoo-Mock\voodoo
-
   #build / test Voodoo-Mock
+#  - cmd: sh -c "g++ -E -x c++ - -v < /dev/null"
+#  - cmd: type  c:\mingw\include\unistd.h
+#  - cmd: sh -c "grep -rnC20 _exit c:/mingw/include"
   - ps: cd "c:\projects\Voodoo-Mock"
-  - cmd: make
+  - cmd: sh -c "make V=1"
