@@ -442,6 +442,46 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveNamespace" ),
         ] )
 
+    def test_templateSpecializationWithEnum( self ):
+        self._simpleTest( "enum class foo { ONE, TWO };template < foo T > struct A {};template <> struct A<foo::ONE> { typedef int * TheType; };", [
+            dict( callbackName = "enum", name = "foo", text = "enum class foo { ONE , TWO }" ),
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "template < foo T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<fooT>structA{}" ),
+            dict( callbackName = "leaveStruct" ),
+            dict( callbackName = "enterStruct", name = "A<foo::ONE>", inheritance = [],
+                templatePrefix = "template <>", templateParametersList = [ "" ],
+                fullTextNaked = "template<>structA<foo::ONE>{typedefint*TheType;}" ),
+            dict( callbackName = "typedef", name = "TheType", text = "typedef int * TheType" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
+    def test_templateSpecializationWithType( self ):
+        self._simpleTest( "template < typename T > struct A {};template <> struct A<int> { typedef int * TheType; };", [
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>structA{}" ),
+            dict( callbackName = "leaveStruct" ),
+            dict( callbackName = "enterStruct", name = "A<int>", inheritance = [],
+                templatePrefix = "template <>", templateParametersList = [ "" ],
+                fullTextNaked = "template<>structA<int>{typedefint*TheType;}" ),
+            dict( callbackName = "typedef", name = "TheType", text = "typedef int * TheType" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
+    def test_templateSpecializationWithIntLiteral( self ):
+        self._simpleTest( "template < int T > struct A {};template <> struct A<5> { typedef int * TheType; };", [
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "template < int T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<intT>structA{}" ),
+            dict( callbackName = "leaveStruct" ),
+            dict( callbackName = "enterStruct", name = "A<5>", inheritance = [],
+                templatePrefix = "template <>", templateParametersList = [ "" ],
+                fullTextNaked = "template<>structA<5>{typedefint*TheType;}" ),
+            dict( callbackName = "typedef", name = "TheType", text = "typedef int * TheType" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
     def test_templateClass( self ):
         self._simpleTest( "template < typename T > class A { T aFunction( T a ) { return 0; }};", [
             dict( callbackName = "enterClass", name = "A", inheritance = [],
@@ -463,13 +503,13 @@ class TestCPPParsing( unittest.TestCase ):
 
     def test_templateStruct( self ):
         self._simpleTest( "template < typename T > struct A { T aFunction( T a ) { return 0; }};", [
-            dict( callbackName = "enterClass", name = "A", inheritance = [],
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
                 templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
                 fullTextNaked = "template<typenameT>structA{TaFunction(Ta){return0;}}" ),
             dict( callbackName = "method", templatePrefix = "", name = "aFunction",
                 text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
                 parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
-            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "leaveStruct" ),
         ] )
 
     def test_Bugfix_FunctionsThatReturnClassesMightNeedToReturnRvalue( self ):

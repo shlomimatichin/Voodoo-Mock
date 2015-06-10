@@ -35,8 +35,8 @@ class VoodooExpectIterator( VoodooIterator ):
         else:
             self._expect[ -1 ].method( decomposition )
 
-    def enterStruct( self, name, inheritance, fullText ):
-        self._enterConstruct( name, inheritance, "", None, fullText, 'struct', 'public' )
+    def enterStruct( self, name, inheritance, templatePrefix, templateParametersList, fullText ):
+        self._enterConstruct( name, inheritance, templatePrefix, templateParametersList, fullText, 'struct', 'public' )
     def leaveStruct( self ):
         self._leaveConstruct()
     def enterClass( self, name, inheritance, templatePrefix, templateParametersList, fullText ):

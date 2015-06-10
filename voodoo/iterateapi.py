@@ -4,6 +4,7 @@ import os
 import gccparity
 
 _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD = [ "static", "inline", "extern", "virtual" ]
+_POSSIBLE_TEMPLATE_SPECIALIZATION_NODE_TYPES = [ cindex.CursorKind.INTEGER_LITERAL, cindex.CursorKind.DECL_REF_EXPR ]
 
 class IterateAPI:
     def __init__( self ):
@@ -13,7 +14,7 @@ class IterateAPI:
         assert False, "Please override in deriving class"
 
     def structForwardDeclaration( self, name ): assert False, "Please override in deriving class"
-    def enterStruct( self, name, inheritance, fullText ): assert False, "Please override in deriving class"
+    def enterStruct( self, name, inheritance, templatePrefix, templateParametersList, fullText ): assert False, "Please override in deriving class"
     def leaveStruct( self ): assert False, "Please override in deriving class"
     def enterClass( self, name, inheritance, templatePrefix, templateParametersList, fullText ): assert False, "Please override in deriving class"
     def leaveClass( self ): assert False, "Please override in deriving class"
@@ -56,24 +57,50 @@ class IterateAPI:
     def __relevantNodes( self, translationUnit, filename ):
         return [ node for node in translationUnit.cursor.get_children() if node.location.file.name == filename ]
 
+    def __isTemplateClass( self, node ):
+        tokens = [ t.spelling for t in node.get_tokens() ]
+        assert tokens[ 0 ] == "template", "Invalid tokens for template node"
+        for index in xrange( len( tokens ) ):
+            if tokens[ index ] == ">":
+                assert index < len( tokens ) - 2, "'>' token not found where it was expected"
+                return tokens[ index + 1 ] == "class"
+        assert False, "'>' token not found"
+
+    def __enterConstruct( self, isClass, * args, ** kwargs ):
+        if isClass:
+            self.enterClass( *args, **kwargs )
+        else:
+            self.enterStruct( *args, **kwargs )
+
+    def __leaveConstruct( self, isClass ):
+        if isClass:
+            self.leaveClass()
+        else:
+            self.leaveStruct()
+
     def __iterateNode( self, node ):
         if node.kind == cindex.CursorKind.STRUCT_DECL and not node.is_definition():
             self.structForwardDeclaration( name = node.spelling )
-        elif node.kind == cindex.CursorKind.STRUCT_DECL and node.is_definition():
-            self.enterStruct( name = node.spelling, inheritance = self.__classInheritance( node ),
+        elif ( node.kind == cindex.CursorKind.STRUCT_DECL and node.is_definition() or
+                node.kind == cindex.CursorKind.CLASS_DECL and node.is_definition() ):
+            isClass = node.kind == cindex.CursorKind.CLASS_DECL
+            if node.get_tokens().next().spelling == "template":
+                templatePrefix = "template <>"
+                templateParametersList = [ "" ]
+            else:
+                templatePrefix = ""
+                templateParametersList = None
+            self.__enterConstruct( isClass = isClass,
+                    name = node.displayname, inheritance = self.__classInheritance( node ),
+                    templatePrefix = templatePrefix, templateParametersList = templateParametersList,
                     fullText = self.__nodeText( node, removeEverythingAfterLastClosingBrace = True ) )
             for child in node.get_children():
                 self.__iterateNode( child )
-            self.leaveStruct()
-        elif node.kind == cindex.CursorKind.CLASS_DECL and node.is_definition():
-            self.enterClass( name = node.spelling, inheritance = self.__classInheritance( node ),
-                    templatePrefix = "", templateParametersList = None,
-                    fullText = self.__nodeText( node, removeEverythingAfterLastClosingBrace = True ) )
-            for child in node.get_children():
-                self.__iterateNode( child )
-            self.leaveClass()
+            self.__leaveConstruct( isClass )
         elif node.kind == cindex.CursorKind.CLASS_TEMPLATE and node.is_definition():
-            self.enterClass( name = node.spelling, inheritance = self.__classInheritance( node ),
+            isClass = self.__isTemplateClass( node )
+            self.__enterConstruct( isClass,
+                    name = node.spelling, inheritance = self.__classInheritance( node ),
                     templatePrefix = self.__templatePrefix( node ),
                     templateParametersList = self.__templateParametersList( node ),
                     fullText = self.__nodeText( node, removeEverythingAfterLastClosingBrace = True ) )
@@ -81,7 +108,7 @@ class IterateAPI:
                 if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ]:
                     continue
                 self.__iterateNode( child )
-            self.leaveClass()
+            self.__leaveConstruct( isClass )
         elif node.kind == cindex.CursorKind.CLASS_DECL and not node.is_definition():
             self.structForwardDeclaration( name = node.spelling )
         elif node.kind == cindex.CursorKind.UNEXPOSED_DECL: #extern "C"
@@ -191,6 +218,8 @@ class IterateAPI:
             self.using( text = text )
         elif node.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
             pass
+        elif node.kind in _POSSIBLE_TEMPLATE_SPECIALIZATION_NODE_TYPES:
+            pass
         elif node.kind == cindex.CursorKind.UNION_DECL:
             if node.spelling == '':
                 return
@@ -225,6 +254,7 @@ class IterateAPI:
     def __templateParametersList( self, node ):
         return [ child.spelling for child in node.get_children()
                 if child.kind in [ cindex.CursorKind.TEMPLATE_TYPE_PARAMETER, cindex.CursorKind.TEMPLATE_NON_TYPE_PARAMETER ] ]
+
     def __parseParameter( self, node, lastParameter ):
         terminator = ')' if lastParameter else ','
         isParameterPack = True if "..." in node.type.spelling else False
