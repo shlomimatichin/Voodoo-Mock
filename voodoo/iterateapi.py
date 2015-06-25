@@ -123,6 +123,8 @@ class IterateAPI:
             self.fieldDeclaration( name = node.spelling, text = self.__nodeText( node ) )
         elif node.kind == cindex.CursorKind.TYPEDEF_DECL:
             self.typedef( name = node.spelling, text = self.__nodeText( node, removeBraces = True ) )
+        elif node.kind == cindex.CursorKind.TYPE_ALIAS_DECL:
+            self.typedef( name = node.spelling, text = self.__nodeText( node, removeBraces = True ) )
         elif node.kind == cindex.CursorKind.ENUM_DECL:
             self.enum( name = node.spelling, text = self.__nodeText( node ) )
         elif node.kind == cindex.CursorKind.FUNCTION_DECL and not node.is_definition():
