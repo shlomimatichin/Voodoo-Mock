@@ -54,6 +54,19 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveNamespace" ),
         ] )
 
+    def test_typeAlias( self ):
+        self._simpleTest( "class A {};\n using MyA = A;", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [], templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classA{}" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "typedef", name = "MyA", text = "using MyA = A" ),
+        ] )
+
+    def test_typeAliasTemplate( self ):
+        self._simpleTest( "#include <vector>\n using MyVector = std::vector< int >;", [
+            dict( callbackName = "typedef", name = "MyVector", text = "using MyVector = std :: vector < int >" ),
+        ] )
+
     def test_namespaceAlias( self ):
         self._simpleTest( "namespace A { namespace B { int b; } namespace C { int c; } int a; } namespace D = A::B;", [
             dict( callbackName = "enterNamespace", name = "A" ),
