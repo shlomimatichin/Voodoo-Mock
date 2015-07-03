@@ -39,7 +39,7 @@ class PyTestWorld:
                 PyTest.suiteClasses[ key ] = value;
 
     def _isTestClass( self, value ):
-        if not type(value) is ClassType:
+        if not type(value) in [ClassType, type]:
             return False;
         if value.__name__ == "PyTestSuite":
             return False;
