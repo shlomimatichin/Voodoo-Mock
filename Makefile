@@ -18,6 +18,7 @@ clean_examples:
 	make -C examples/3_writing_cpp_tests/deriving_a_mocked_interface clean
 	make -C examples/3_writing_cpp_tests/expectation_based_mock_objects clean
 	make -C examples/6_coverage_enforcement clean
+	make -C examples/7_simple_python_unittest clean
 
 build_examples:
 	make -C examples/1_simplest_project
@@ -27,4 +28,4 @@ build_examples:
 	make -C examples/3_writing_cpp_tests/custom_stubs
 	make -C examples/3_writing_cpp_tests/deriving_a_mocked_interface
 	make -C examples/3_writing_cpp_tests/expectation_based_mock_objects
-	make -C examples/6_coverage_enforcement
+	make -C examples/7_simple_python_unittest
