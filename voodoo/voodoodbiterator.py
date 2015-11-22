@@ -19,6 +19,7 @@ class VoodooDBIterator( iterateapi.IterateAPI ):
             db.close()
 
     def structForwardDeclaration( self, ** kwargs ): pass
+    def classForwardDeclaration( self, ** kwargs ): pass
     def enterStruct( self, ** kwargs ): pass
     def leaveStruct( self, ** kwargs ): pass
     def enterClass( self, ** kwargs ): pass

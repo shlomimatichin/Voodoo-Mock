@@ -28,6 +28,7 @@ class VoodooMultiplexerIterator( iterateapi.IterateAPI ):
                 getattr( self._multiplexer._expect, self._name )( * args, ** kwargs )
                 getattr( self._multiplexer._db, self._name )( * args, ** kwargs )
         self.structForwardDeclaration = MethodMultiplexer( self, "structForwardDeclaration" )
+        self.classForwardDeclaration = MethodMultiplexer( self, "classForwardDeclaration" )
         self.enterStruct = MethodMultiplexer( self, "enterStruct" )
         self.leaveStruct = MethodMultiplexer( self, "leaveStruct" )
         self.enterClass = MethodMultiplexer( self, "enterClass" )

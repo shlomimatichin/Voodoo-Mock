@@ -27,13 +27,11 @@ class VoodooIterator( iterateapi.IterateAPI ):
     def fullIdentifier( self , identifier ):
         return "::".join( self._namespace + self.inClass + [ identifier ] )
 
-    def structForwardDeclaration( self, name ):
-        if self._protectionIgnoring.ignore():
-            return
-        if name in self._perFileSettings.SKIP:
-            return
-        self._code.lineOut( "struct " + name + ";" )
-        self._code.lineOut( "" )
+    def classForwardDeclaration( self, name, templatePrefix ):
+        self._forwardDeclaration( name, templatePrefix, "class" )
+
+    def structForwardDeclaration( self, name, templatePrefix ):
+        self._forwardDeclaration( name, templatePrefix, "struct" )
 
     def variableDeclaration( self, name, text ):
         if self._protectionIgnoring.ignore():
@@ -154,6 +152,16 @@ class VoodooIterator( iterateapi.IterateAPI ):
         else:
             self._protectionIgnoring.enter( defaultProtection )
         return not self._protectionIgnoring.ignoreButLast()
+
+    def _forwardDeclaration( self, name, templatePrefix, construct ):
+        if self._protectionIgnoring.ignore():
+            return
+        if name in self._perFileSettings.SKIP:
+            return
+        if templatePrefix != "":
+            self._code.lineOut( templatePrefix )
+        self._code.lineOut( "%s %s;" % ( construct, name ) )
+        self._code.lineOut( "" )
 
     def _enterConstruct( self, name, inheritance, templatePrefix, templateParametersList, fullText, construct, defaultProtection ):
         if not self.shouldImplementEnterConstruct( name, fullText, defaultProtection ):
