@@ -97,6 +97,9 @@ class IterateAPI:
             for child in node.get_children():
                 self.__iterateNode( child )
             self.__leaveConstruct( isClass )
+        elif node.kind == cindex.CursorKind.CLASS_TEMPLATE and not node.is_definition():
+            fullText = self.__nodeText( node )
+            self.structForwardDeclaration( name = fullText )
         elif node.kind == cindex.CursorKind.CLASS_TEMPLATE and node.is_definition():
             isClass = self.__isTemplateClass( node )
             self.__enterConstruct( isClass,
