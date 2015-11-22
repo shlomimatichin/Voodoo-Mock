@@ -587,5 +587,25 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveStruct" ),
         ] )
 
+    def test_Bugfix_TemplateStructForwardDeclaration( self ):
+        self._simpleTest( "template < typename T > struct A; template < typename T > struct A { T y; };", [
+            dict( callbackName = "structForwardDeclaration", name = "template < typename T > struct A" ),
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>structA{Ty;}" ),
+            dict( callbackName = "fieldDeclaration", name = "y", text = "T y" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
+    def test_Bugfix_TemplateClassForwardDeclaration( self ):
+        self._simpleTest( "template < typename T > class A; template < typename T > class A { T y; };", [
+            dict( callbackName = "structForwardDeclaration", name = "template < typename T > class A" ),
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>classA{Ty;}" ),
+            dict( callbackName = "fieldDeclaration", name = "y", text = "T y" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()
