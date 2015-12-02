@@ -569,5 +569,95 @@ class TestCPPParsing( unittest.TestCase ):
                 returnRValue = False, returnType = "template < typename T > int", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
+    def test_BugFix_TemplateDerivedTemplateClass( self ):
+        self._simpleTest( "template < typename T > class A {}; template < typename T > class B : public A< T > { T aFunction( T a ) { return 0; }};", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>classA{}" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'A<T>' ) ],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>classB:publicA<T>{TaFunction(Ta){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_BugFix_DerivedTemplateClass( self ):
+        self._simpleTest( "template < typename T > class A {}; class B : public A< int > { int aFunction( int a ) { return 0; }};", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>classA{}" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'A<int>' ) ],
+                templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classB:publicA<int>{intaFunction(inta){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "int", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "int a", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_BugFix_TemplateDerivedClass( self ):
+        self._simpleTest( "class A {}; template < typename T > class B : public A { T aFunction( T a ) { return 0; }};", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classA{}" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'A' ) ],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>classB:publicA{TaFunction(Ta){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_BugFix_TemplateDerivedTemplateStruct( self ):
+        self._simpleTest( "template < typename T > struct A {}; template < typename T > struct B : public A< T > { T aFunction( T a ) { return 0; }};", [
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>structA{}" ),
+            dict( callbackName = "leaveStruct" ),
+            dict( callbackName = "enterStruct", name = "B", inheritance = [ ( 'public', 'A<T>' ) ],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>structB:publicA<T>{TaFunction(Ta){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
+    def test_BugFix_DerivedTemplateStruct( self ):
+        self._simpleTest( "template < typename T > struct A {}; struct B : public A< int > { int aFunction( int a ) { return 0; }};", [
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>structA{}" ),
+            dict( callbackName = "leaveStruct" ),
+            dict( callbackName = "enterStruct", name = "B", inheritance = [ ( 'public', 'A<int>' ) ],
+                templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "structB:publicA<int>{intaFunction(inta){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "int", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "int a", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
+    def test_BugFix_TemplateDerivedStruct( self ):
+        self._simpleTest( "struct A {}; template < typename T > struct B : public A { T aFunction( T a ) { return 0; }};", [
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "structA{}" ),
+            dict( callbackName = "leaveStruct" ),
+            dict( callbackName = "enterStruct", name = "B", inheritance = [ ( 'public', 'A' ) ],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>structB:publicA{TaFunction(Ta){return0;}}" ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "T", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "T a", isParameterPack = False ) ] ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()

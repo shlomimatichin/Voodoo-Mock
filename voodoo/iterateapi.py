@@ -235,12 +235,14 @@ class IterateAPI:
         inheritance = []
         try:
             for child in node.get_children():
-                if child.kind != cindex.CursorKind.CXX_BASE_SPECIFIER:
+                if child.kind not in [ cindex.CursorKind.CXX_BASE_SPECIFIER, cindex.CursorKind.TEMPLATE_TYPE_PARAMETER ]:
                     break
-                protection = child.get_tokens().next().spelling
-                if protection not in [ 'public', 'protected' ]:
-                    continue
-                inheritance.append( ( protection, self.__fullNamespaceType( child.type.get_declaration() ) ) )
+                if child.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
+                    protection = child.get_tokens().next().spelling
+                    if protection not in [ 'public', 'protected' ]:
+                        continue
+                    inheritance.append( ( protection, self.__fullNamespaceType( child.type.get_declaration(),
+                        withType = False ) + child.type.get_declaration().displayname ) )
         except StopIteration:
             pass
         return inheritance
@@ -391,8 +393,8 @@ class IterateAPI:
                 tokens.pop()
         return tokens
 
-    def __fullNamespaceType( self, node ):
-        text = node.spelling
+    def __fullNamespaceType( self, node, withType = True ):
+        text = node.spelling if withType else ""
         ancestor = node.semantic_parent
         while ancestor and ancestor.spelling:
             text = ancestor.spelling + "::" + text
