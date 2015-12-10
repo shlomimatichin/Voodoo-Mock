@@ -84,12 +84,14 @@ class IterateAPI:
         elif ( node.kind == cindex.CursorKind.STRUCT_DECL and node.is_definition() or
                 node.kind == cindex.CursorKind.CLASS_DECL and node.is_definition() ):
             isClass = node.kind == cindex.CursorKind.CLASS_DECL
-            if node.get_tokens().next().spelling == "template":
-                templatePrefix = "template <>"
-                templateParametersList = [ "" ]
-            else:
-                templatePrefix = ""
-                templateParametersList = None
+            templatePrefix = ""
+            templateParametersList = None
+            try:
+                if node.get_tokens().next().spelling == "template":
+                    templatePrefix = "template <>"
+                    templateParametersList = [ "" ]
+            except:
+                pass
             self.__enterConstruct( isClass = isClass,
                     name = node.displayname, inheritance = self.__classInheritance( node ),
                     templatePrefix = templatePrefix, templateParametersList = templateParametersList,
