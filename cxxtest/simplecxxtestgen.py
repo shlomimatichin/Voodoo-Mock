@@ -28,7 +28,7 @@ def findTests( lines, firstLine ):
     while index < len( lines ):
         match = testMethod.match( lines[ index ] )
         if match is not None:
-            tests.append( ( match.group( 1 ), index ) )
+            tests.append( ( match.group( 1 ), index + 1 ) )
         index += 1
     return tests
 
