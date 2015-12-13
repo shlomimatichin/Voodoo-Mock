@@ -6,6 +6,7 @@ class SavingIterator( iterateapi.IterateAPI ):
         self.printErrors = True
         self.saved = []
         self._addSaver( 'structForwardDeclaration' )
+        self._addSaver( 'classForwardDeclaration' )
         self._addSaver( 'enterStruct' )
         self._addSaver( 'leaveStruct' )
         self._addSaver( 'enterClass' )

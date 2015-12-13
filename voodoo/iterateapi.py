@@ -13,7 +13,8 @@ class IterateAPI:
     def handleError( self, severity, location, spelling, ranges, fixits ):
         assert False, "Please override in deriving class"
 
-    def structForwardDeclaration( self, name ): assert False, "Please override in deriving class"
+    def structForwardDeclaration( self, name, templatePrefix ): assert False, "Please override in deriving class"
+    def classForwardDeclaration( self, name, templatePrefix ): assert False, "Please override in deriving class"
     def enterStruct( self, name, inheritance, templatePrefix, templateParametersList, fullText ): assert False, "Please override in deriving class"
     def leaveStruct( self ): assert False, "Please override in deriving class"
     def enterClass( self, name, inheritance, templatePrefix, templateParametersList, fullText ): assert False, "Please override in deriving class"
@@ -66,6 +67,12 @@ class IterateAPI:
                 return tokens[ index + 1 ] == "class"
         assert False, "'>' token not found"
 
+    def __forwardDeclarationConstruct( self, isClass, * args, ** kwargs ):
+        if isClass:
+            self.classForwardDeclaration( *args, **kwargs )
+        else:
+            self.structForwardDeclaration( *args, **kwargs )
+
     def __enterConstruct( self, isClass, * args, ** kwargs ):
         if isClass:
             self.enterClass( *args, **kwargs )
@@ -80,7 +87,7 @@ class IterateAPI:
 
     def __iterateNode( self, node ):
         if node.kind == cindex.CursorKind.STRUCT_DECL and not node.is_definition():
-            self.structForwardDeclaration( name = node.spelling )
+            self.structForwardDeclaration( name = node.spelling, templatePrefix = "" )
         elif ( node.kind == cindex.CursorKind.STRUCT_DECL and node.is_definition() or
                 node.kind == cindex.CursorKind.CLASS_DECL and node.is_definition() ):
             isClass = node.kind == cindex.CursorKind.CLASS_DECL
@@ -97,6 +104,11 @@ class IterateAPI:
             for child in node.get_children():
                 self.__iterateNode( child )
             self.__leaveConstruct( isClass )
+        elif node.kind == cindex.CursorKind.CLASS_TEMPLATE and not node.is_definition():
+            isClass = self.__isTemplateClass( node )
+            self.__forwardDeclarationConstruct( isClass,
+                    name = node.spelling,
+                    templatePrefix = self.__templatePrefix( node ) )
         elif node.kind == cindex.CursorKind.CLASS_TEMPLATE and node.is_definition():
             isClass = self.__isTemplateClass( node )
             self.__enterConstruct( isClass,
@@ -110,7 +122,7 @@ class IterateAPI:
                 self.__iterateNode( child )
             self.__leaveConstruct( isClass )
         elif node.kind == cindex.CursorKind.CLASS_DECL and not node.is_definition():
-            self.structForwardDeclaration( name = node.spelling )
+            self.classForwardDeclaration( name = node.spelling, templatePrefix = "" )
         elif node.kind == cindex.CursorKind.UNEXPOSED_DECL: #extern "C"
             for child in node.get_children():
                 self.__iterateNode( child )

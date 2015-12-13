@@ -569,5 +569,47 @@ class TestCPPParsing( unittest.TestCase ):
                 returnRValue = False, returnType = "template < typename T > int", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
+    def test_ClassForwardDeclaration( self ):
+        self._simpleTest( "class A; class A { int y; };", [
+            dict( callbackName = "classForwardDeclaration", name = "A",
+                templatePrefix = "" ),
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                templatePrefix = "", templateParametersList = None, fullTextNaked = "classA{inty;}" ),
+            dict( callbackName = "fieldDeclaration", name = "y", text = "int y" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_StructForwardDeclaration( self ):
+        self._simpleTest( "struct A; struct A { int y; };", [
+            dict( callbackName = "structForwardDeclaration", name = "A",
+                templatePrefix = "" ),
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "", templateParametersList = None, fullTextNaked = "structA{inty;}" ),
+            dict( callbackName = "fieldDeclaration", name = "y", text = "int y" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
+    def test_Bugfix_TemplateStructForwardDeclaration( self ):
+        self._simpleTest( "template < typename T > struct A; template < typename T > struct A { T y; };", [
+            dict( callbackName = "structForwardDeclaration", name = "A",
+                templatePrefix = "template < typename T >" ),
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>structA{Ty;}" ),
+            dict( callbackName = "fieldDeclaration", name = "y", text = "T y" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
+    def test_Bugfix_TemplateClassForwardDeclaration( self ):
+        self._simpleTest( "template < typename T > class A; template < typename T > class A { T y; };", [
+            dict( callbackName = "classForwardDeclaration", name = "A",
+                templatePrefix = "template < typename T >" ),
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+                fullTextNaked = "template<typenameT>classA{Ty;}" ),
+            dict( callbackName = "fieldDeclaration", name = "y", text = "T y" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()

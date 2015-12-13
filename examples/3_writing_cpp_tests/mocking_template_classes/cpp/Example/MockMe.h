@@ -5,6 +5,9 @@ namespace Example
 {
 
 template < typename T >
+class Mockme;
+
+template < typename T >
 class MockMe
 {
 public:

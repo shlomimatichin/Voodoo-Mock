@@ -17,7 +17,8 @@ class TestCParsing( unittest.TestCase ):
         self.assertEquals( tested.saved, expected )
 
     def test_structDeclaration( self ):
-        self._simpleTest( "struct name_of_struct;", [ dict( callbackName = "structForwardDeclaration", name = "name_of_struct" ) ] )
+        self._simpleTest( "struct name_of_struct;", [ dict( callbackName = "structForwardDeclaration",
+            name = "name_of_struct", templatePrefix = "" ) ] )
 
     def test_emptyStructDefinition( self ):
         self._simpleTest( "struct name_of_struct {};", [
@@ -154,7 +155,8 @@ class TestCParsing( unittest.TestCase ):
 
     def test_globalVoidFunctionDefinitionWithStructPointers( self ):
         self._simpleTest( "const struct S * aFunction( const struct S * s ) { return 0; }", [
-            dict( callbackName = 'structForwardDeclaration', name = 'S' ),
+            dict( callbackName = 'structForwardDeclaration', name = 'S',
+                templatePrefix = "" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "aFunction",
                 text = "const struct S * aFunction", returnRValue = False, returnType = "const struct S *", static = False, const = False, virtual = False, parameters = [
                 dict( name = "s", text = "const struct S * s", isParameterPack = False ) ] ),
@@ -235,7 +237,8 @@ extern void dev_put(struct net_device *dev);
         tested = savingiterator.SavingIterator()
         with tools.temporaryFile( contents ) as contentsFile:
             tested.process( contentsFile, defines = [ "DEFINESTRUCT=struct" ] )
-        expected = [ dict( callbackName = "structForwardDeclaration", name = "name_of_struct" ) ]
+        expected = [ dict( callbackName = "structForwardDeclaration",
+            name = "name_of_struct", templatePrefix = "" ) ]
         if tested.saved != expected:
             pprint.pprint( tested.saved )
             pprint.pprint( expected )
