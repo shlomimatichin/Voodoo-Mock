@@ -85,18 +85,22 @@ class IterateAPI:
         else:
             self.leaveStruct()
 
+    def __templatePrefixAndParametersForDefinitionNode( self, node ):
+        try:
+            firstToken = node.get_tokens().next()
+        except StopIteration:
+            return "", None
+        if firstToken.spelling != "template":
+            return "", None
+        return "template <>", [ "" ]
+
     def __iterateNode( self, node ):
         if node.kind == cindex.CursorKind.STRUCT_DECL and not node.is_definition():
             self.structForwardDeclaration( name = node.spelling, templatePrefix = "" )
         elif ( node.kind == cindex.CursorKind.STRUCT_DECL and node.is_definition() or
                 node.kind == cindex.CursorKind.CLASS_DECL and node.is_definition() ):
             isClass = node.kind == cindex.CursorKind.CLASS_DECL
-            if node.get_tokens().next().spelling == "template":
-                templatePrefix = "template <>"
-                templateParametersList = [ "" ]
-            else:
-                templatePrefix = ""
-                templateParametersList = None
+            templatePrefix, templateParametersList = self.__templatePrefixAndParametersForDefinitionNode( node )
             self.__enterConstruct( isClass = isClass,
                     name = node.displayname, inheritance = self.__classInheritance( node ),
                     templatePrefix = templatePrefix, templateParametersList = templateParametersList,

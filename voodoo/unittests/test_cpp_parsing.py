@@ -701,5 +701,25 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveStruct" ),
         ] )
 
+    def test_Bugfix_MacroDefiningClass( self ):
+        self._testWithHeaders( """
+                               #define CLASS_MACRO( NAME ) \
+                               class NAME \
+                               { \
+                                  NAME( bool v ) {} \
+                               }
+                               """,
+                               "class SuperDuper { CLASS_MACRO( Internal ); };", [
+            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [],
+                templatePrefix = "", templateParametersList = None, fullTextNaked = "classSuperDuper{CLASS_MACRO(Internal);}" ),
+            dict( callbackName = "enterClass", name = "Internal", inheritance = [],
+                templatePrefix = "", templateParametersList = None, fullTextNaked = "" ),
+            dict( callbackName = "constructorDefinition", templatePrefix = "", name = "Internal", text = "Internal",
+                returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
+                dict( name = "v", text = "", isParameterPack = False ), ] ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()
