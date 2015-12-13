@@ -23,7 +23,12 @@ namespace CxxTest
 			* outputStream() << "\nTEST '" << desc.testName() << "'\n";
 			outputStream()->flush();
 		}
-        void leaveWorld( const WorldDescription &desc ) {}
+        void leaveWorld( const WorldDescription &desc )
+	        {
+			* outputStream() << "\nPassed tests: " << desc.numTotalTests() - TestTracker::tracker().failedTests() << "\n";
+			* outputStream() << "Failed tests: " << TestTracker::tracker().failedTests() << "\n\n";
+			outputStream()->flush();
+		}
         void leaveTest( const TestDescription & ) {}
     };
 }
