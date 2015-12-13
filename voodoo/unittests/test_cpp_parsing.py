@@ -569,5 +569,21 @@ class TestCPPParsing( unittest.TestCase ):
                 returnRValue = False, returnType = "template < typename T > int", static = False, virtual = False, const = False, parameters = [] ),
         ] )
 
+    def test_BugFix_FinalClass( self ):
+        self._simpleTest( "class A final {};", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [],
+                templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "classAfinal{}" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_BugFix_FinalStruct( self ):
+        self._simpleTest( "struct A final {};", [
+            dict( callbackName = "enterStruct", name = "A", inheritance = [],
+                templatePrefix = "", templateParametersList = None,
+                fullTextNaked = "structAfinal{}" ),
+            dict( callbackName = "leaveStruct" ),
+        ] )
+
 if __name__ == '__main__':
     unittest.main()

@@ -218,6 +218,8 @@ class IterateAPI:
         elif node.kind == cindex.CursorKind.NAMESPACE_ALIAS:
             text = self.__nodeText( node )
             self.using( text = text )
+        elif node.kind == cindex.CursorKind.CXX_FINAL_ATTR:
+            pass
         elif node.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
             pass
         elif node.kind in _POSSIBLE_TEMPLATE_SPECIALIZATION_NODE_TYPES:
