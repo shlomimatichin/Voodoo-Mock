@@ -33,6 +33,8 @@ class SavingIterator( iterateapi.IterateAPI ):
         setattr( self, callName, lambda decomposition: self._save( callName, ** decomposition.__dict__ ) )
 
     def _save( self, callbackName, fullText = None, ** kwargs ):
+        if 'fullyQualifiedName' in kwargs:
+            del kwargs[ 'fullyQualifiedName' ]
         if fullText is not None:
             kwargs[ 'fullTextNaked' ] = fullText.strip( ';' ).replace( " ", "" ).replace( "\t", "" ).replace( '\n', '' )
         self.saved.append( dict( callbackName = callbackName, ** kwargs ) )

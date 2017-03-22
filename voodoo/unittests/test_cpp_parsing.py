@@ -29,6 +29,36 @@ class TestCPPParsing( unittest.TestCase ):
             pprint.pprint( expected )
         self.assertEquals( tested.saved, expected )
 
+    def test_staticMemberDecleration( self ):
+        self._simpleTest( "class SuperDuper { static int y; public: static int x; private: int z; }; int SuperDuper::y;", [
+            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [],
+                templatePrefix = "", templateParametersList = None, fullTextNaked = "classSuperDuper{staticinty;public:staticintx;private:intz;}" ),
+            dict( callbackName = "variableDeclaration", name = "y", static = True, text = "int y" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "variableDeclaration", name = "x", static = True, text = "int x" ),
+            dict( callbackName = "accessSpec", access = "private" ),
+            dict( callbackName = "fieldDeclaration", name = "z", text = "int z" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "variableDeclaration", name = "y", static = False, text = "int SuperDuper :: y" ),
+        ] )
+
+    def test_staticMemberDeclerationForIndentedClass( self ):
+        self._simpleTest( "class Super { public: class SuperDuper { static int y; public: static int x; private: int z; };}; int Super::SuperDuper::y;", [
+            dict( callbackName = "enterClass", name = "Super", inheritance = [],
+                templatePrefix = "", templateParametersList = None, fullTextNaked = "classSuper{public:classSuperDuper{staticinty;public:staticintx;private:intz;};}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [],
+                templatePrefix = "", templateParametersList = None, fullTextNaked = "classSuperDuper{staticinty;public:staticintx;private:intz;}" ),
+            dict( callbackName = "variableDeclaration", name = "y", static = True, text = "int y" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "variableDeclaration", name = "x", static = True, text = "int x" ),
+            dict( callbackName = "accessSpec", access = "private" ),
+            dict( callbackName = "fieldDeclaration", name = "z", text = "int z" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "leaveClass" ),
+            dict( callbackName = "variableDeclaration", name = "y", static = False, text = "int Super :: SuperDuper :: y" ),
+        ] )
+
     def test_classDeclaration( self ):
         self._simpleTest( "class SuperDuper { int y; public: int x; private: int z; };", [
             dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [],
@@ -45,12 +75,12 @@ class TestCPPParsing( unittest.TestCase ):
         self._simpleTest( "namespace A { namespace B { int b; } namespace C { int c; } int a; }", [
             dict( callbackName = "enterNamespace", name = "A" ),
             dict( callbackName = "enterNamespace", name = "B" ),
-            dict( callbackName = "variableDeclaration", name = "b", text = "int b" ),
+            dict( callbackName = "variableDeclaration", name = "b", static = False, text = "int b" ),
             dict( callbackName = "leaveNamespace" ),
             dict( callbackName = "enterNamespace", name = "C" ),
-            dict( callbackName = "variableDeclaration", name = "c", text = "int c" ),
+            dict( callbackName = "variableDeclaration", name = "c", static = False, text = "int c" ),
             dict( callbackName = "leaveNamespace" ),
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = False, text = "int a" ),
             dict( callbackName = "leaveNamespace" ),
         ] )
 
@@ -71,12 +101,12 @@ class TestCPPParsing( unittest.TestCase ):
         self._simpleTest( "namespace A { namespace B { int b; } namespace C { int c; } int a; } namespace D = A::B;", [
             dict( callbackName = "enterNamespace", name = "A" ),
             dict( callbackName = "enterNamespace", name = "B" ),
-            dict( callbackName = "variableDeclaration", name = "b", text = "int b" ),
+            dict( callbackName = "variableDeclaration", name = "b", static = False, text = "int b" ),
             dict( callbackName = "leaveNamespace" ),
             dict( callbackName = "enterNamespace", name = "C" ),
-            dict( callbackName = "variableDeclaration", name = "c", text = "int c" ),
+            dict( callbackName = "variableDeclaration", name = "c", static = False, text = "int c" ),
             dict( callbackName = "leaveNamespace" ),
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = False, text = "int a" ),
             dict( callbackName = "leaveNamespace" ),
         dict( callbackName = "using", text = "namespace D = A :: B" ),
         ] )
@@ -217,7 +247,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "Result", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classResult{}" ),
             dict( callbackName = "leaveClass" ),
-            dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
+            dict( callbackName = "variableDeclaration", name = "globalResult", static = False, text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "Result & getResult",
                 returnRValue = False, returnType = "Result &", static = False, virtual = False, const = False, parameters = [] ),
         ] )
@@ -227,7 +257,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "Result", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classResult{}" ),
             dict( callbackName = "leaveClass" ),
-            dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
+            dict( callbackName = "variableDeclaration", name = "globalResult", static = False, text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "const Result & getResult",
                 returnRValue = False, returnType = "const Result &", static = False, virtual = False, const = False, parameters = [] ),
         ] )
@@ -237,7 +267,7 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "enterClass", name = "Result", inheritance = [], templatePrefix = "", templateParametersList = None,
                 fullTextNaked = "classResult{}" ),
             dict( callbackName = "leaveClass" ),
-            dict( callbackName = "variableDeclaration", name = "globalResult", text = "Result globalResult" ),
+            dict( callbackName = "variableDeclaration", name = "globalResult", static = False, text = "Result globalResult" ),
             dict( callbackName = "functionDefinition", templatePrefix = "", name = "getResult", text = "Result * getResult",
                 returnRValue = False, returnType = "Result *", static = False, virtual = False, const = False, parameters = [] ),
         ] )
@@ -348,7 +378,7 @@ class TestCPPParsing( unittest.TestCase ):
                 fullTextNaked = "classAInterface{virtualintf()const=0;staticinta;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
                 returnRValue = False, returnType = "int", static = False, virtual = True, const = True, parameters = [] ),
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = True, text = "int a" ),
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'AInterface' ) ],
                 templatePrefix = "", templateParametersList = None, fullTextNaked = "classB:publicAInterface{intf()constoverride{return0;}}" ),
@@ -376,7 +406,7 @@ class TestCPPParsing( unittest.TestCase ):
 
     def test_ExternC( self ):
         self._simpleTest( 'extern "C" { int a; }\nextern "C" void f();', [
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = False, text = "int a" ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "f", text = "void f",
                 returnRValue = False, returnType = "void", static = False, virtual = False, const = False, parameters = [] ),
         ] )
@@ -392,7 +422,7 @@ class TestCPPParsing( unittest.TestCase ):
 
 #    def test_CodeInMacro( self ):
 #        self._simpleTest( "#define X class SuperDuper { public: int aFunction( int a ) { return 0; } int c; }\nint c; X;", [
-#            dict( callbackName = "variableDeclaration", name = "c", text = "int c" ),
+#            dict( callbackName = "variableDeclaration", name = "c", static = False, text = "int c" ),
 #            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
 #                fullTextNaked = "classSuperDuper{public:intaFunction(inta){return0;}intc;}" ),
 #            dict( callbackName = "accessSpec", access = "public" ),
@@ -436,7 +466,7 @@ class TestCPPParsing( unittest.TestCase ):
                 fullTextNaked = "classAInterface{virtualintf()=0;staticinta;}" ),
             dict( callbackName = "method", templatePrefix = "", name = "f", text = "f",
                 returnRValue = False, returnType = "int", static = False, virtual = True, const = False, parameters = [] ),
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = True, text = "int a" ),
             dict( callbackName = "leaveClass" ),
             dict( callbackName = "enterClass", name = "B", inheritance = [ ( 'public', 'AInterface' ) ],
                 templatePrefix = "", templateParametersList = None, fullTextNaked = "classB:publicAInterface{intf()overridefinal{return0;}}" ),
@@ -448,7 +478,7 @@ class TestCPPParsing( unittest.TestCase ):
     def test_usingNotANamespace( self ):
         self._simpleTest( "namespace A { int a; } namespace B { using A::a; }", [
             dict( callbackName = "enterNamespace", name = "A" ),
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = False, text = "int a" ),
             dict( callbackName = "leaveNamespace" ),
             dict( callbackName = "enterNamespace", name = "B" ),
             dict( callbackName = "using", text = "using A :: a" ),

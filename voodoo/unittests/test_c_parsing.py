@@ -29,17 +29,17 @@ class TestCParsing( unittest.TestCase ):
 
     def test_globalInteger( self ):
         self._simpleTest( "int global;", [
-            dict( callbackName = "variableDeclaration", name = "global", text = "int global" ),
+            dict( callbackName = "variableDeclaration", name = "global", static = False, text = "int global" ),
         ] )
 
     def test_globalPointer( self ):
         self._simpleTest( "char * global;", [
-            dict( callbackName = "variableDeclaration", name = "global", text = "char * global" ),
+            dict( callbackName = "variableDeclaration", name = "global", static = False, text = "char * global" ),
         ] )
 
     def test_globalConstPointer( self ):
         self._simpleTest( "const char * global;", [
-            dict( callbackName = "variableDeclaration", name = "global", text = "const char * global" ),
+            dict( callbackName = "variableDeclaration", name = "global", static = False, text = "const char * global" ),
         ] )
 
     def test_globalTypedef( self ):
@@ -100,7 +100,7 @@ class TestCParsing( unittest.TestCase ):
 
     def test_VoidFunctionPointerDefinition( self ):
         self._simpleTest( "void (*aFunction)();", [
-            dict( callbackName = "variableDeclaration", name = "aFunction", text = "void ( * aFunction ) ( )" ),
+            dict( callbackName = "variableDeclaration", name = "aFunction", static = False, text = "void ( * aFunction ) ( )" ),
         ] )
 
     def test_TypedefVoidFunctionPointerDefinition( self ):
@@ -175,7 +175,7 @@ class TestCParsing( unittest.TestCase ):
     def test_useTypedef( self ):
         self._simpleTest( "typedef int Int;\nInt i;", [
             dict( callbackName = "typedef", name = "Int", text = "typedef int Int" ),
-            dict( callbackName = "variableDeclaration", name = "i", text = "Int i" ),
+            dict( callbackName = "variableDeclaration", name = "i", static = False, text = "Int i" ),
         ] )
 
     def _parseError( self, contents ):
@@ -205,7 +205,7 @@ class TestCParsing( unittest.TestCase ):
 
     def test_includeScenario( self ):
         self._testInclude( "typedef int Int;", "Int i;", [
-            dict( callbackName = "variableDeclaration", name = "i", text = "Int i" ),
+            dict( callbackName = "variableDeclaration", name = "i", static = False, text = "Int i" ),
         ] )
 
     def test_realCase( self ):
@@ -222,7 +222,7 @@ extern void dev_put(struct net_device *dev);
             dict( callbackName = "enterStruct", name = 'net', inheritance = [], fullTextNaked = "structnet{}",
                 templatePrefix = "", templateParametersList = None ),
             dict( callbackName = "leaveStruct" ),
-            dict( callbackName = "variableDeclaration", name = "init_net", text = "extern struct net init_net" ),
+            dict( callbackName = "variableDeclaration", name = "init_net", static = False, text = "extern struct net init_net" ),
             dict( callbackName = "functionForwardDeclaration", templatePrefix = "", name = "dev_get_by_name", text = "struct net_device * dev_get_by_name",
                 returnRValue = False, returnType = "struct net_device *", static = False, const = False, virtual = False, parameters = [
                 dict( name = "net", text = "struct net * net", isParameterPack = False ),
@@ -253,7 +253,7 @@ extern void dev_put(struct net_device *dev);
 
     def test_StaticVariableShouldNotRemainStaticToAvoidCompilationError( self ):
         self._simpleTest( "static int i;", [
-            dict( callbackName = "variableDeclaration", name = "i", text = "int i" ) ] )
+            dict( callbackName = "variableDeclaration", name = "i", static = True, text = "int i" ) ] )
 
     def test_BugfixRecursiveBraces( self ):
         self._simpleTest( "int func() { if ( 1 ) { return 1; } else { return 0; } }", [
@@ -286,16 +286,16 @@ extern void dev_put(struct net_device *dev);
         self._simpleTest( "#define nothing nada\n", [] )
         self._simpleTest( "#define nothing\n\nnothing", [] )
         self._simpleTest( "#define nothing\n\nnothing int a;", [
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = False, text = "int a" ),
         ] )
         self._simpleTest( "#define a b\n\nint a;", [
-            dict( callbackName = "variableDeclaration", name = "b", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "b", static = False, text = "int a" ),
         ] )
 
     def notest_KnownIssue_DefiningIntBoolOrBuiltinTypes( self ):
         self._simpleTest( "#define int int\n\rbool b;\nint a;", [
-            dict( callbackName = "variableDeclaration", name = "b", text = "bool b" ),
-            dict( callbackName = "variableDeclaration", name = "a", text = "int a" ),
+            dict( callbackName = "variableDeclaration", name = "b", static = False, text = "bool b" ),
+            dict( callbackName = "variableDeclaration", name = "a", static = False, text = "int a" ),
         ] )
 
 if __name__ == '__main__':

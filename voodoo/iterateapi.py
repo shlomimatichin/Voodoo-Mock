@@ -19,7 +19,7 @@ class IterateAPI:
     def leaveStruct( self ): assert False, "Please override in deriving class"
     def enterClass( self, name, inheritance, templatePrefix, templateParametersList, fullText ): assert False, "Please override in deriving class"
     def leaveClass( self ): assert False, "Please override in deriving class"
-    def variableDeclaration( self, name, text ): assert False, "Please override in deriving class"
+    def variableDeclaration( self, name, fullyQualifiedName, static, text ): assert False, "Please override in deriving class"
     def typedef( self, name, text ): assert False, "Please override in deriving class"
     def union( self, name, text ): assert False, "Please override in deriving class"
     def enum( self, name, text ): assert False, "Please override in deriving class"
@@ -131,10 +131,14 @@ class IterateAPI:
             for child in node.get_children():
                 self.__iterateNode( child )
         elif node.kind == cindex.CursorKind.VAR_DECL:
-            if "static constexpr" in self.__nodeText( node ):
-                self.variableDeclaration( name = node.spelling, text = self.__nodeText( node ) )
+            nodeText = self.__nodeText( node )
+            if "static constexpr" in nodeText:
+                self.variableDeclaration( name = node.spelling, fullyQualifiedName = node.get_usr(),
+                    static = False, text = nodeText )
             else:
-                self.variableDeclaration( name = node.spelling, text = self.__nodeText( node, removePrefixKeywords = [ 'static' ] ) )
+                self.variableDeclaration( name = node.spelling, fullyQualifiedName = node.get_usr(),
+                        static = "static" in nodeText,
+                        text = self.__nodeText( node, removePrefixKeywords = [ 'static' ] ) )
         elif node.kind == cindex.CursorKind.FIELD_DECL:
             self.fieldDeclaration( name = node.spelling, text = self.__nodeText( node ) )
         elif node.kind == cindex.CursorKind.TYPEDEF_DECL:
