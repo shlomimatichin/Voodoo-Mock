@@ -93,7 +93,7 @@ int main( int argc, const char * argv[] ) {
 
 testsCode = "\n".join( RUN_TEST_TEMPLATE % dict(
             location = "%s:%d" % ( args.input, testLine ),
-            testLine = testLine,
+            testLine = testLine + 1,
             testName = testName )
         for testName, testLine in tests )
 deleteCode = "\n".join( DELETE_TEMPLATE % dict( testName = testName ) for testName, testLine in tests )
