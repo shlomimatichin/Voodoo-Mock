@@ -1,7 +1,7 @@
 function RunSingleTest()
         let bufferName = bufname( "%" )
         let line = line( "." )
-        execute "make test_singletest SINGLE_TEST_SUITE=\"`python -c 'import os; import sys; print os.path.relpath( sys.argv[ 1 ], os.getcwd() )' " . bufferName . "`\" SINGLE_TEST_LINE=" . line
+        execute "make test_singletest SINGLE_TEST_SUITE=\"`python -c 'import os; import sys; print os.path.relpath( sys.argv[ 1 ], os.getcwd() )' " . bufferName . "`\" REGEX_OR_LINE_NUMBER=" . line
 endfunction
 
 function RunSingleTestSuite()

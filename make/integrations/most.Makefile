@@ -19,12 +19,12 @@ test_allPython:
 __SINGLE_TEST_SUITE_PYTHON = $(filter-out %.py,$(SINGLE_TEST_SUITE))
 
 test_singletest:
-	$(Q)echo "Running single test $(SINGLE_TEST_SUITE) Line $(SINGLE_TEST_LINE)"
+	$(Q)echo "Running single test $(SINGLE_TEST_SUITE) Line/Name $(REGEX_OR_LINE_NUMBER)"
 	$(Q)[ "$(SINGLE_TEST_SUITE)" ] || echo 'You must specify "SINGLE_TEST_SUITE=<filename>"'
 	$(Q)[ "$(SINGLE_TEST_SUITE)" ]
 	$(MAKE) -f $(VOODOO_ROOT_DIR)/make/1_generate.Makefile
 	test -z '$(__SINGLE_TEST_SUITE_PYTHON)' || $(MAKE) -f $(VOODOO_ROOT_DIR)/make/2_build.Makefile CXXTEST_FIND_PATTERN=$(SINGLE_TEST_SUITE)
-	$(Q)$(VOODOO_ROOT_DIR)/make/runsingletest.sh $(SINGLE_TEST_SUITE) $(SINGLE_TEST_LINE)
+	$(Q)$(VOODOO_ROOT_DIR)/make/runsingletest.sh $(SINGLE_TEST_SUITE) $(REGEX_OR_LINE_NUMBER)
 
 test_singletestsuite:
 	$(Q)echo "Running single test suite $(SINGLE_TEST_SUITE)"

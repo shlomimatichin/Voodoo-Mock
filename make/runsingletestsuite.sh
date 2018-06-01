@@ -1,6 +1,5 @@
 #!/bin/bash
 SUITE=$1
-TEST_LINE=$2
 
 function isPython {
     echo $SUITE | grep '\.py$' > /dev/null
