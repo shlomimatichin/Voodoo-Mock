@@ -90,12 +90,11 @@ class EnforceCPPCoverage:
 
     def _scan( self, unitTestExecutables ):
         for executable in unitTestExecutables:
-            output = subprocess.check_output(
-                        [ 'gcov', '--long-file-names', '--preserve-paths', '--relative-only', os.path.abspath( executable ) ],
-                        stderr = subprocess.STDOUT )
+            command = [ 'gcov', '--long-file-names', '--preserve-paths', '--relative-only', executable ]
+            output = subprocess.check_output( command, stderr = subprocess.STDOUT )
             dirList = glob.glob( "*.gcov" )
             if len( dirList ) == 0:
-                raise Exception( "GCOV failed:\n%s" % output )
+                raise Exception( "GCOV failed:\n%s\n%s" % ( command, output ) )
             for gcovFilename in dirList:
                 self._readGCOV( gcovFilename )
                 os.unlink( gcovFilename )
