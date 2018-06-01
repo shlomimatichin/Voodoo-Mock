@@ -27,7 +27,7 @@ public:
 
 	~Always()
 	{
-		VOODOO_ASSERT( _preIntercepter == 0 );
+		VOODOO_ASSERT_NO_THROW( _preIntercepter == 0 );
 		* _previous = _next;
 		if ( _next != 0 )
 			_next->_previous = _previous;

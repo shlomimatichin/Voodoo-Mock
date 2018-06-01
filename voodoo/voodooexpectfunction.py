@@ -65,14 +65,17 @@ class VoodooExpectFunction:
         self._code.increaseIndent()
         self._code.lineOut( tabs + 'try {' )
 
-    def _catchVoodooErrorMessages( self, tabs = "" ):
+    def _catchVoodooErrorMessages( self, tabs = "", noThrow = False ):
         self._code.lineOut( tabs + '} catch ( VoodooCommon::ErrorMessage & e ) {' )
         self._code.lineOut( tabs + '\tVoodooCommon::ErrorMessage error;' )
         self._code.lineOut( tabs + '\terror.append( "From " );' )
         self._code.lineOut( tabs + '\terror.append( __FUNCTION__ );' )
         self._code.lineOut( tabs + '\terror.append( ": " );' )
         self._code.lineOut( tabs + '\terror.append( e.result() );' )
-        self._code.lineOut( tabs + '\tVOODOO_FAIL_TEST( error.result() );' )
-        self._code.lineOut( tabs + '\tthrow "VOODOO_FAIL_TEST must throw";' )
+        if noThrow:
+            self._code.lineOut( tabs + '\tVOODOO_FAIL_TEST_NO_THROW( error.result() );' )
+        else:
+            self._code.lineOut( tabs + '\tVOODOO_FAIL_TEST( error.result() );' )
+            self._code.lineOut( tabs + '\tthrow "VOODOO_FAIL_TEST must throw";' )
         self._code.lineOut( tabs + '}' )
         self._code.decreaseIndent()

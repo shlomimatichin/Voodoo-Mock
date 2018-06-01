@@ -25,6 +25,7 @@
 			( identifier ) )
 
 #define VOODOO_ASSERT( x ) if ( ! ( x ) ) { VOODOO_FAIL_TEST( "Internal Voodoo Error: should not be reached" ); }
+#define VOODOO_ASSERT_NO_THROW( x ) if ( ! ( x ) ) { VOODOO_FAIL_TEST_NO_THROW( "Internal Voodoo Error: should not be reached" ); }
 
 namespace VoodooCommon
 {

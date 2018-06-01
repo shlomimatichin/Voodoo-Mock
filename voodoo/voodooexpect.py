@@ -149,7 +149,7 @@ class VoodooExpect:
                         ' growingString.result() );' )
         self._code.lineOut( '\t\t\tconst void * unusedReturnValue = 0;' )
         self._code.lineOut( '\t\t\tmultiplexer.returnValue( 0, unusedReturnValue );' )
-        VoodooExpectFunction( self._code )._catchVoodooErrorMessages( "\t\t" )
+        VoodooExpectFunction( self._code )._catchVoodooErrorMessages( "\t\t", noThrow = True )
         self._code.lineOut( '\t\t\t__voodooSetInstanceName( "" );' )
         self._code.lineOut( "\t\t}" )
         self._code.lineOut( "\t}" )
