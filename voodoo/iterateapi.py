@@ -199,7 +199,13 @@ class IterateAPI:
             if node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
                 templatePrefix = self.__templatePrefix( node )
                 assert returnType.startswith( templatePrefix ), "'%s' '%s'" % ( returnType, templatePrefix )
-                returnType = returnType[ len( templatePrefix ) : ].lstrip()
+                returnTypeList = returnType[ len( templatePrefix ) : ].split()
+                specialWordsPrefixCount = 0
+                for word in returnTypeList:
+                    if word not in _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD:
+                        break
+                    specialWordsPrefixCount += 1
+                returnType = " ".join( returnTypeList[ specialWordsPrefixCount : ] )
             decomposition = functiondecomposition.FunctionDecomposition(
                                                                 name = node.spelling,
                                                                 text = node.spelling,

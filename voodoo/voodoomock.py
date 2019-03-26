@@ -32,12 +32,18 @@ class VoodooMock:
         return decomposition.parametersFullSpec() == \
                     "const %s & %s" % ( self._identifier, decomposition.parameters[ 0 ][ 'name' ] )
 
+    def _isMoveSemantics( self, decomposition ):
+        if len( decomposition.parameters ) != 1:
+            return False
+        return decomposition.parametersFullSpec() == \
+                    "%s && %s" % ( self._identifier, decomposition.parameters[ 0 ][ 'name' ] )
+
     def _mockInherits( self ):
         return [ i for i in self._inherits if i not in
                                 self._perFileSettings.NO_MOCK_DERIVE_AND_USE_DEFAULT_CONSTRUCTOR ]
 
     def implementConstructor( self, decomposition ):
-        if ( self._isCopyConstructor( decomposition ) ):
+        if ( self._isCopyConstructor( decomposition ) or self._isMoveSemantics( decomposition ) ):
             return
         self._constructorCount += 1
         inherits = ""
@@ -92,6 +98,10 @@ class VoodooMock:
         self._code.lineOut( "" )
 
     def implementMethod( self, decomposition ):
+        parametersForwardingList = decomposition.parametersForwardingList()
+        if self._isMoveSemantics( decomposition ):
+            parametersForwardingList = "std::move( %s )" % parametersForwardingList
+
         const = ""
         if decomposition.const:
             const = " const"
@@ -107,7 +117,7 @@ class VoodooMock:
                                         const,
                                         self._identifier,
                                         decomposition.name,
-                                        decomposition.parametersForwardingList() ) )
+                                        parametersForwardingList ) )
         self._code.lineOut( "\t} else {" )
         self._code.lineOut( "\t\t__VoodooGrowingString message;" )
         self._code.lineOut( "\t\tmessage.append( \"Method \" " )
@@ -131,7 +141,7 @@ class VoodooMock:
                                         const,
                                         self._identifier,
                                         decomposition.name,
-                                        decomposition.parametersForwardingList() ) )
+                                        parametersForwardingList ) )
         self._code.lineOut( "\t}" )
         self._code.lineOut( "}" )
         self._code.lineOut( "" )
